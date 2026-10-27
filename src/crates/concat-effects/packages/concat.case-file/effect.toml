@@ -1,0 +1,24 @@
+format = 2
+
+[effect]
+id = "concat.case-file"
+name = "Case File"
+kind = "filter"
+category = "Documentary & Horror"
+order = 51
+intensity = "mood"
+aliases = ["case-file", "cold-case", "true-crime", "documentary"]
+description = "The true-crime grade: colour drained, cold teal in the shadows, a sallow warmth left in the highlights, the blacks lifted a touch and the corners dim."
+
+[[param]]
+key = "mood"
+label = "Mood"
+min = 0
+max = 100
+default = 60
+step = 1
+unit = "%"
+
+[wgsl]
+entry = "effect.wgsl"
+space = "display"

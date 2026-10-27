@@ -1411,6 +1411,11 @@ mod tests {
             ("concat.motion-blur", "Optical & Lens"),
             ("concat.swirl", "Distortion & Glitch"),
             ("concat.neon", "Party & Club"),
+            ("concat.case-file", "Documentary & Horror"),
+            ("concat.ken-burns", "Documentary & Horror"),
+            ("concat.haunted", "Documentary & Horror"),
+            ("concat.spooky", "Documentary & Horror"),
+            ("concat.film-grain", "Documentary & Horror"),
         ] {
             assert!(on(id, shelf), "{id} on {shelf}");
         }

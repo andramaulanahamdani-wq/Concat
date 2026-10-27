@@ -1,0 +1,24 @@
+[effect]
+id = "concat.behind-the-wall"
+name = "Behind the Wall"
+kind = "audio"
+category = "Documentary & Horror"
+order = 36
+intensity = "muffle"
+aliases = ["behind-the-wall", "muffled", "next-room", "other-room"]
+description = "Heard through a wall or a closed door: the top taken off, the bottom thinned, and the room it is in still ringing."
+
+[[param]]
+key = "muffle"
+label = "Muffle"
+min = 0
+max = 100
+default = 60
+step = 1
+unit = "%"
+
+[ffmpeg]
+let = [
+  "m = muffle / 100",
+]
+chain = "highpass=f=120,lowpass=f={round(3000 - m * 2400)},lowpass=f={round(3000 - m * 2400)},aecho=0.8:0.6:{round(25 + m * 25)}|{round(55 + m * 35)}:0.3|0.2,volume={fixed(1 - m * 0.4, 2)}"

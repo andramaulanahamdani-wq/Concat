@@ -3,6 +3,7 @@ id = "concat.cathedral"
 name = "Cathedral"
 kind = "audio"
 category = "Space"
+shelves = ["Documentary & Horror"]
 order = 34
 intensity = "size"
 aliases = ["cathedral"]

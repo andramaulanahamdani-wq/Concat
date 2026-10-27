@@ -6,6 +6,7 @@ name = "Chromatic Aberration"
 version = 2
 kind = "effect"
 category = "Distort"
+shelves = ["Documentary & Horror"]
 order = 54
 intensity = "shift"
 aliases = ["chromatic-aberration"]

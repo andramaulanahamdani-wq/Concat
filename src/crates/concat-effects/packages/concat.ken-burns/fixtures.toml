@@ -1,0 +1,19 @@
+# A flat picture moved or enlarged is the same flat picture: the probes pin
+# that the move reads only inside the frame and leaves the colour alone.
+
+[[probe]]
+name = "default"
+input = [0.3, 0.2, 0.12, 1]
+expect = [0.300049, 0.199951, 0.119995, 1]
+
+[[probe]]
+name = "minimum"
+at = "min"
+input = [0.45, 0.4, 0.35, 1]
+expect = [0.449951, 0.399902, 0.350098, 1]
+
+[[probe]]
+name = "maximum"
+at = "max"
+input = [0.08, 0.07, 0.06, 1]
+expect = [0.0800171, 0.0700073, 0.0599976, 1]

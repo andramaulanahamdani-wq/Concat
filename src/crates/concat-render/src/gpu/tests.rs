@@ -2416,3 +2416,98 @@ fn a_background_is_wiped_with_its_picture() {
         "the edge is the picture's"
     );
 }
+
+/// A built-in package's pass at `values`, its other knobs at their defaults.
+fn built_in(id: &str, values: &[(&str, f64)]) -> ShaderPass {
+    let set: BTreeMap<String, f64> = values
+        .iter()
+        .map(|(key, value)| ((*key).to_owned(), *value))
+        .collect();
+    concat_effects::Catalogue::builtin()
+        .get(id)
+        .unwrap_or_else(|| panic!("{id} is built in"))
+        .pass(&set, None)
+        .expect("a shader")
+}
+
+/// Within `tolerance` levels of each other in every colour channel.
+fn close(a: [u8; 4], b: [u8; 4], tolerance: i32) -> bool {
+    (0..3).all(|c| (i32::from(a[c]) - i32::from(b[c])).abs() <= tolerance)
+}
+
+/// Letterbox crops a 4:3 frame to 2.39: black bars above and below, the
+/// picture through untouched between them.
+#[test]
+fn letterbox_bars_a_frame_to_its_aspect() {
+    let Some(mut gpu) = gpu() else { return };
+    let (w, h) = (64u32, 48u32);
+    let source = gradient(w, h);
+    let mut barred = layer(source.clone());
+    barred.effects = vec![built_in("concat.letterbox", &[("aspect", 2.39)])];
+    let out = gpu.render(&plan(w, h, vec![barred]));
+    // (4 / 3) / 2.39 of the height kept: 26.8 rows, from 10.6 to 37.4.
+    for y in [0, 5, 9, 39, 43, 47] {
+        assert_eq!(out.pixel(20, y), Some([0, 0, 0, 255]), "row {y} is a bar");
+    }
+    for y in [12, 24, 35] {
+        let want = source.pixel(20, y).expect("inside");
+        let got = out.pixel(20, y).expect("inside");
+        assert!(close(want, got, 2), "row {y}: want {want:?}, got {got:?}");
+    }
+}
+
+/// Ken Burns starts as shot and ends enlarged by its zoom about the
+/// middle: a corner of the frame then shows what was a third of the way
+/// in, at a zoom of 50%.
+#[test]
+fn ken_burns_pushes_in_over_its_duration_and_holds() {
+    let Some(mut gpu) = gpu() else { return };
+    let (w, h) = (66u32, 48u32);
+    let source = gradient(w, h);
+    let at = |seconds: f64, gpu: &mut WgpuCompositor| {
+        let mut moving = layer(source.clone());
+        moving.effects = vec![built_in(
+            "concat.ken-burns",
+            &[("zoom", 50.0), ("direction", 0.0), ("duration", 4.0)],
+        )];
+        let mut p = plan(w, h, vec![moving]);
+        p.time = concat_core::time::Rational::approximate(seconds).expect("a rational");
+        gpu.render(&p)
+    };
+    let start = at(0.0, &mut gpu);
+    let corner = source.pixel(2, 2).expect("inside");
+    assert!(
+        close(start.pixel(2, 2).expect("inside"), corner, 2),
+        "starts as shot"
+    );
+    for seconds in [4.0, 9.0] {
+        let end = at(seconds, &mut gpu);
+        // Pixel 2's centre, 2.5, read from 0.5 + (2.5 / w - 0.5) / 1.5 of
+        // the way across: x 12.67, y 9.67.
+        let want = source.pixel(12, 9).expect("inside");
+        let got = end.pixel(2, 2).expect("inside");
+        assert!(
+            close(want, got, 6),
+            "at {seconds}s: want {want:?}, got {got:?}"
+        );
+    }
+}
+
+/// CCTV's REC light is red in the top left for the first half of every
+/// second, dark for the second half, and gone when switched off.
+#[test]
+fn cctv_blinks_its_rec_light() {
+    let Some(mut gpu) = gpu() else { return };
+    let (w, h) = (320u32, 240u32);
+    let at = |seconds: f64, rec: f64, gpu: &mut WgpuCompositor| {
+        let mut taped = layer(solid(w, h, [90, 90, 90, 255]));
+        taped.effects = vec![built_in("concat.cctv", &[("wear", 0.0), ("rec", rec)])];
+        let mut p = plan(w, h, vec![taped]);
+        p.time = concat_core::time::Rational::approximate(seconds).expect("a rational");
+        gpu.render(&p).pixel(16, 16).expect("inside")
+    };
+    let red = |c: [u8; 4]| c[0] > 180 && c[1] < 80 && c[2] < 80;
+    assert!(red(at(0.25, 1.0, &mut gpu)), "lit in the first half second");
+    assert!(!red(at(0.75, 1.0, &mut gpu)), "dark in the second");
+    assert!(!red(at(0.25, 0.0, &mut gpu)), "off when switched off");
+}

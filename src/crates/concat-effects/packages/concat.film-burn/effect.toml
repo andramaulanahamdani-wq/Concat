@@ -5,6 +5,7 @@ id = "concat.film-burn"
 name = "Film Burn"
 kind = "transition"
 category = "Dissolve"
+shelves = ["Documentary & Horror"]
 order = 2
 description = "A warm over-exposed flash burns through the cut."
 
