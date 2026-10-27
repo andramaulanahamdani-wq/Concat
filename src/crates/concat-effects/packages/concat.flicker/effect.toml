@@ -1,0 +1,32 @@
+format = 2
+
+[effect]
+id = "concat.flicker"
+name = "Flicker"
+kind = "effect"
+category = "Documentary & Horror"
+order = 30
+intensity = "amount"
+aliases = ["flicker", "failing-bulb", "light-flicker"]
+description = "A failing bulb: the light trembles, and now and then drops almost to black."
+
+[[param]]
+key = "amount"
+label = "Amount"
+min = 0
+max = 100
+default = 50
+step = 1
+unit = "%"
+
+[[param]]
+key = "rate"
+label = "Rate"
+type = "int"
+min = 1
+max = 24
+default = 8
+step = 1
+
+[wgsl]
+entry = "effect.wgsl"

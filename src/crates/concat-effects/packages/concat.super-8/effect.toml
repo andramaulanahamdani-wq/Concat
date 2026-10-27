@@ -5,6 +5,7 @@ id = "concat.super-8"
 name = "Super 8"
 kind = "filter"
 category = "Film"
+shelves = ["Documentary & Horror"]
 order = 62
 description = "Faded, warm and grainy: an old home movie run through a projector."
 

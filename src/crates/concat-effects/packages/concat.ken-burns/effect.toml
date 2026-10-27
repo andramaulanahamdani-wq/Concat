@@ -1,0 +1,42 @@
+format = 2
+
+[effect]
+id = "concat.ken-burns"
+name = "Ken Burns"
+kind = "effect"
+category = "Documentary & Horror"
+order = 20
+intensity = "zoom"
+aliases = ["ken-burns", "slow-zoom", "pan-and-scan"]
+description = "A still made to move: a slow push in or out, or a drift across it. For the photographs, maps and documents a story is told over."
+
+[[param]]
+key = "zoom"
+label = "Zoom"
+min = 5
+max = 60
+default = 20
+step = 1
+unit = "%"
+
+[[param]]
+key = "direction"
+label = "Direction"
+type = "enum"
+min = 0
+max = 5
+default = 0
+values = [0, 1, 2, 3, 4, 5]
+labels = ["Zoom In", "Zoom Out", "Pan Left", "Pan Right", "Pan Up", "Pan Down"]
+
+[[param]]
+key = "duration"
+label = "Duration"
+min = 1
+max = 30
+default = 6
+step = 0.5
+unit = "s"
+
+[wgsl]
+entry = "effect.wgsl"

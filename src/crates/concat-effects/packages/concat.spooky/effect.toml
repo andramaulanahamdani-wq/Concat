@@ -5,6 +5,7 @@ id = "concat.spooky"
 name = "Spooky"
 kind = "filter"
 category = "Stylised"
+shelves = ["Documentary & Horror"]
 order = 54
 intensity = "dread"
 description = "Drained colour, a green-cyan cast, a hard toe, and a heavy vignette. For the season."

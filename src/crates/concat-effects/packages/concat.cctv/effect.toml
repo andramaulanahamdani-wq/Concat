@@ -1,0 +1,33 @@
+format = 2
+
+[effect]
+id = "concat.cctv"
+name = "CCTV"
+kind = "filter"
+category = "Documentary & Horror"
+order = 56
+intensity = "wear"
+aliases = ["cctv", "security-camera", "surveillance", "found-footage"]
+description = "A security camera's tape: grey and a little cool, soft, lined and noisy, with a blinking REC light in the corner. Lay a title over it for the timestamp."
+
+[[param]]
+key = "wear"
+label = "Wear"
+min = 0
+max = 100
+default = 60
+step = 1
+unit = "%"
+
+[[param]]
+key = "rec"
+label = "REC light"
+type = "bool"
+min = 0
+max = 1
+default = 1
+step = 1
+
+[wgsl]
+entry = "effect.wgsl"
+space = "display"

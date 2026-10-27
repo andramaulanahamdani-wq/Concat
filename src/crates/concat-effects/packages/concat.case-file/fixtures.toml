@@ -1,0 +1,19 @@
+# Colours in the display encoding's working space. Pinned from the GPU
+# (lavapipe) through the package's own shader.
+
+[[probe]]
+name = "default"
+input = [0.3, 0.2, 0.12, 1]
+expect = [0.285156, 0.212524, 0.147339, 1]
+
+[[probe]]
+name = "minimum"
+at = "min"
+input = [0.45, 0.4, 0.35, 1]
+expect = [0.449951, 0.399902, 0.350098, 1]
+
+[[probe]]
+name = "maximum"
+at = "max"
+input = [0.08, 0.07, 0.06, 1]
+expect = [0.0654297, 0.0785522, 0.0823364, 1]

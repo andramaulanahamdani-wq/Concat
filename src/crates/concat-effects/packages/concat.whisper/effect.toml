@@ -3,6 +3,7 @@ id = "concat.whisper"
 name = "Whisper"
 kind = "audio"
 category = "Voice"
+shelves = ["Documentary & Horror"]
 order = 16
 intensity = "air"
 aliases = ["breathy", "intimate"]

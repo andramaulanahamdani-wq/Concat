@@ -1,0 +1,24 @@
+[effect]
+id = "concat.haunted"
+name = "Haunted"
+kind = "audio"
+category = "Documentary & Horror"
+order = 18
+intensity = "depth"
+aliases = ["haunted", "ghost", "demon", "possessed"]
+description = "A voice dropped low, dulled, and followed by its own echoes: the thing in the walls, the voice on the tape."
+
+[[param]]
+key = "depth"
+label = "Depth"
+min = 1
+max = 8
+default = 4
+step = 0.5
+unit = "st"
+
+[ffmpeg]
+let = [
+  "ratio = pow(2, -depth / 12)",
+]
+chain = "aresample=48000,asetrate={fixed(48000 * ratio, 6)},aresample=48000,atempo={fixed(1 / ratio, 8)},lowpass=f={round(7000 - depth * 400)},aecho=0.8:0.8:{round(70 + depth * 10)}|{round(160 + depth * 20)}:0.4|0.25"
