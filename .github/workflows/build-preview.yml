@@ -1,0 +1,20 @@
+# A test build of a feature branch: every installer build-app.yml makes,
+# uploaded as this run's artifacts (Actions > the run > Artifacts), with no
+# release published. Unsigned, as nothing here holds a certificate.
+name: Build preview
+
+on:
+  push:
+    branches: ["feat/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: build-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-app.yml
