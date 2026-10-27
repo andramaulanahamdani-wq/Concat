@@ -1,0 +1,13 @@
+format = 2
+
+[effect]
+id = "concat.shards"
+name = "Shards"
+kind = "transition"
+category = "Glitch"
+order = 47
+description = "The outgoing shot breaks into shards that fall away one by one."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

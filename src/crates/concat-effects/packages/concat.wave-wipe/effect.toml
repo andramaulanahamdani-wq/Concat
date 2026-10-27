@@ -1,0 +1,22 @@
+format = 2
+
+[effect]
+id = "concat.wave-wipe"
+name = "Wave Wipe"
+kind = "transition"
+category = "Wipe"
+order = 36
+description = "A wavy edge sweeps the incoming shot across."
+
+[[param]]
+key = "softness"
+label = "Softness"
+min = 0
+max = 100
+default = 15
+step = 1
+unit = "%"
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

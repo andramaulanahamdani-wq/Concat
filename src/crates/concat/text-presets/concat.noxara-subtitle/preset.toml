@@ -1,0 +1,19 @@
+id = "concat.noxara-subtitle"
+name = "Noxara Subtitle"
+language = "Latin"
+order = 111
+offsetY = 0.36
+
+[style]
+content = "Some doors should stay closed"
+fontFamily = "Cinzel"
+fontWeight = 400
+fontSize = 0.05
+color = "#ffffff"
+strokeWidth = 0.007
+strokeColor = "#1a0630"
+maxWidth = 0.8
+
+[motion]
+in = { preset = "fade", duration = 0.15 }
+out = { preset = "fade", duration = 0.15 }

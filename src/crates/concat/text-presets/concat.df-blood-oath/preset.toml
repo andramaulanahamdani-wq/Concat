@@ -1,0 +1,18 @@
+id = "concat.df-blood-oath"
+name = "Blood Oath"
+language = "Latin"
+order = 104
+
+[style]
+content = "Blood Oath"
+fontFamily = "Pirata One"
+fontWeight = 400
+fontSize = 0.1
+color = "#b3121b"
+strokeWidth = 0.004
+strokeColor = "#000000"
+
+[motion]
+in = { preset = "drop", duration = 0.9 }
+out = { preset = "fade", duration = 0.6 }
+loop = { preset = "tremble", duration = 1.0 }

@@ -1,0 +1,20 @@
+id = "concat.noxara-lower-third"
+name = "Noxara Lower Third"
+language = "Latin"
+order = 113
+offsetY = 0.3
+
+[style]
+content = "Ravenmoor — 1347"
+fontFamily = "Cinzel"
+fontWeight = 400
+fontSize = 0.045
+color = "#e9dcff"
+align = "left"
+strokeWidth = 0.004
+strokeColor = "#12001f"
+tracking = 0.006
+
+[motion]
+in = { preset = "from-left", duration = 0.6 }
+out = { preset = "from-left", duration = 0.5 }

@@ -1,0 +1,14 @@
+format = 2
+
+[effect]
+id = "concat.flicker-cut"
+name = "Flicker Cut"
+kind = "transition"
+category = "Dark"
+shelves = ["Documentary & Horror"]
+order = 44
+description = "The two shots stutter against each other like a failing projector before the cut holds."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

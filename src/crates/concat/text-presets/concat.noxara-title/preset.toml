@@ -1,0 +1,19 @@
+id = "concat.noxara-title"
+name = "Noxara Title"
+language = "Latin"
+order = 110
+
+[style]
+content = "NOXARA"
+fontFamily = "Cinzel Decorative"
+fontWeight = 700
+fontSize = 0.12
+color = "#c9a8ff"
+strokeWidth = 0.004
+strokeColor = "#14002a"
+tracking = 0.015
+
+[motion]
+in = { preset = "rise", duration = 1.5 }
+out = { preset = "fade", duration = 1.0 }
+loop = { preset = "breathe", duration = 3.5 }

@@ -1,0 +1,17 @@
+id = "concat.noxara-case-file"
+name = "Noxara Case File"
+language = "Latin"
+order = 114
+offsetY = -0.3
+
+[style]
+content = "CASE NO. 1347 — UNSOLVED"
+fontFamily = "Special Elite"
+fontWeight = 400
+fontSize = 0.045
+color = "#e6e2d8"
+shadow = true
+
+[motion]
+in = { preset = "flicker", duration = 0.8 }
+out = { preset = "fade", duration = 0.4 }

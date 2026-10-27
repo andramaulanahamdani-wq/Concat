@@ -1,0 +1,16 @@
+id = "concat.df-chapter"
+name = "Chapter"
+language = "Latin"
+order = 101
+
+[style]
+content = "CHAPTER I"
+fontFamily = "Cinzel"
+fontWeight = 400
+fontSize = 0.05
+color = "#e8dcc0"
+tracking = 0.02
+
+[motion]
+in = { preset = "fade", duration = 1.2 }
+out = { preset = "fade", duration = 0.8 }

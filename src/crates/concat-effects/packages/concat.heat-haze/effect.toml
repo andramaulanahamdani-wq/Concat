@@ -1,0 +1,13 @@
+format = 2
+
+[effect]
+id = "concat.heat-haze"
+name = "Heat Haze"
+kind = "transition"
+category = "Distort"
+order = 39
+description = "The air shimmers and the next shot wavers into place."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

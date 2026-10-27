@@ -364,11 +364,22 @@ pub enum Repeat {
     Drift,
     /// A slow push in that starts again each round.
     Zoom,
+    /// In a little and back out, slowly: a still or a shot kept alive. A
+    /// round as long as the clip is one breath of a Ken Burns.
+    SlowZoom,
+    /// Drifts side to side across a slightly enlarged picture, so no edge
+    /// shows.
+    Pan,
+    /// The small unsteady sway of a camera held in the hand: found
+    /// footage, a witness's phone.
+    Handheld,
+    /// A hard, fast shake: a blast, a slam, something heavy landing.
+    CameraShake,
 }
 
 impl Repeat {
     /// Every loop, in the order a menu lists them.
-    pub const ALL: [Repeat; 15] = [
+    pub const ALL: [Repeat; 19] = [
         Repeat::Pulse,
         Repeat::Breathe,
         Repeat::Float,
@@ -384,6 +395,10 @@ impl Repeat {
         Repeat::Glitch,
         Repeat::Drift,
         Repeat::Zoom,
+        Repeat::SlowZoom,
+        Repeat::Pan,
+        Repeat::Handheld,
+        Repeat::CameraShake,
     ];
 
     /// The name a project file stores it by. Stable forever.
@@ -404,6 +419,10 @@ impl Repeat {
             Repeat::Glitch => "glitch",
             Repeat::Drift => "drift",
             Repeat::Zoom => "zoom",
+            Repeat::SlowZoom => "slow-zoom",
+            Repeat::Pan => "pan",
+            Repeat::Handheld => "handheld",
+            Repeat::CameraShake => "camera-shake",
         }
     }
 
@@ -425,6 +444,10 @@ impl Repeat {
             Repeat::Glitch => "Glitch",
             Repeat::Drift => "Drift",
             Repeat::Zoom => "Zoom",
+            Repeat::SlowZoom => "Slow Zoom",
+            Repeat::Pan => "Pan",
+            Repeat::Handheld => "Handheld",
+            Repeat::CameraShake => "Camera Shake",
         }
     }
 
@@ -533,6 +556,40 @@ impl Repeat {
                 scale: 1.0 + 0.08 * smooth(t),
                 ..rest
             },
+            Repeat::SlowZoom => Pose {
+                scale: 1.0 + 0.12 * swell,
+                ..rest
+            },
+            Repeat::Pan => Pose {
+                scale: 1.12,
+                dx: 0.05 * wave,
+                ..rest
+            },
+            Repeat::Handheld => {
+                // Sines at rates that never line up, on the clip's own
+                // clock rather than the round's, so it never repeats and
+                // never jumps where one round meets the next.
+                let at = round + t;
+                let sway = |rate: f64, phase: f64| (at * TAU * rate + phase).sin();
+                Pose {
+                    scale: 1.04,
+                    dx: 0.006 * (sway(0.37, 0.0) + 0.5 * sway(1.13, 1.7)),
+                    dy: 0.005 * (sway(0.29, 2.1) + 0.5 * sway(0.97, 0.4)),
+                    rotation: 0.4 * (sway(0.23, 0.9) + 0.4 * sway(0.81, 2.6)),
+                    ..rest
+                }
+            }
+            Repeat::CameraShake => {
+                let at = round + t;
+                let jolt = |rate: f64, phase: f64| (at * TAU * rate + phase).sin();
+                Pose {
+                    scale: 1.08,
+                    dx: 0.02 * (jolt(7.3, 0.0) + 0.5 * jolt(13.1, 1.3)),
+                    dy: 0.016 * (jolt(6.1, 2.2) + 0.5 * jolt(11.7, 0.5)),
+                    rotation: 1.2 * jolt(5.3, 1.1),
+                    ..rest
+                }
+            }
         }
     }
 }

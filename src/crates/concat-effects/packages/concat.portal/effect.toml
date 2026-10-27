@@ -1,0 +1,14 @@
+format = 2
+
+[effect]
+id = "concat.portal"
+name = "Portal"
+kind = "transition"
+category = "Fantasy"
+shelves = ["Documentary & Horror"]
+order = 51
+description = "A glowing ring swirls open in the middle and the next shot is through it."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

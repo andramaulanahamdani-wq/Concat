@@ -13,6 +13,7 @@ import { Pane, PaneHeader } from "pane.slint";
 import { PaneKind, PaneSwitcher } from "pane-switcher.slint";
 import { ClipKind, StageGuideData, StageItemData } from "../timeline/model.slint";
 import { ContextMenu, MenuMetrics, MenuRow } from "../primitives/context-menu.slint";
+import { SafeZoneOverlay, SafeZones } from "safe-zone.slint";
 
 // The programme monitor: a header that says what the output is, a stage on a
 // sunken viewport, and a transport tray under it in three parts — timecode on
@@ -812,6 +813,11 @@ export component PreviewPane inherits Rectangle {
     /// the button the transport carries.
     public function fit-view() { viewport.fit(); }
 
+    /// The platform whose safe zone is drawn over the picture: 0 none,
+    /// then `SafeZones.names` in order. The monitor's own business, kept
+    /// for as long as the pane is up; nothing renders it.
+    property <int> safe-zone: 0;
+
     // `OUTPUTS` in studio.rs, row for row.
     property <[int]> ratios-w: [1920, 3840, 1080, 1080, 1080, 1080, 1440, 2560];
     property <[int]> ratios-h: [1080, 2160, 1920, 1080, 1350, 1440, 1080, 1080];
@@ -1101,6 +1107,15 @@ export component PreviewPane inherits Rectangle {
                 }
             }
 
+            // A platform's furniture over the picture, under the chips.
+            if root.safe-zone > 0: SafeZoneOverlay {
+                x: stage.x;
+                y: stage.y;
+                width: stage.width;
+                height: stage.height;
+                zone: root.safe-zone;
+            }
+
             // A look shown over the picture from the library, not laid down:
             // said on the monitor for as long as it is up, with a cross to
             // take it off - else it read as a filter put on the clip.
@@ -1314,6 +1329,24 @@ export component PreviewPane inherits Rectangle {
                     horizontal-stretch: 1;
                     spacing: 6px;
                     alignment: end;
+
+                    // Where TikTok's, Reels', Shorts' and YouTube's own
+                    // buttons will sit over the picture.
+                    VerticalLayout {
+                        alignment: center;
+                        Select {
+                            snug: true;
+                            width: self.natural-width;
+                            glyph: Glyph.frame;
+                            current: root.safe-zone;
+                            options: [
+                                I18n.t("previewPane.noSafeZone"),
+                                SafeZones.names[0], SafeZones.names[1], SafeZones.names[2],
+                                SafeZones.names[3], SafeZones.names[4],
+                            ];
+                            changed(index) => { root.safe-zone = index; }
+                        }
+                    }
 
                     VerticalLayout {
                         alignment: center;

@@ -1,0 +1,9 @@
+# A cut from one colour to another at 0.37 of the way, its middle pixel.
+# Pinned from the GPU (lavapipe) through the package's own shader.
+
+[[probe]]
+name = "default"
+input = [0.8, 0.5, 0.3, 1]
+to = [0.05, 0.15, 0.4, 1]
+progress = 0.37
+expect = [0.776367, 0.563477, 0.460938, 1]

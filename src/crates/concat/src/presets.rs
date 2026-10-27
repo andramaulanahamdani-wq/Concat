@@ -30,6 +30,11 @@
 //! strokeWidth = 0.01
 //! align = "center"
 //!
+//! [motion]                     # optional: how it comes in, goes out and loops,
+//! in = { preset = "fade", duration = 0.6 }      # the names concat_core::motion
+//! out = { preset = "fade", duration = 0.4 }     # knows; a duration in seconds,
+//! loop = { preset = "float", duration = 3.0 }   # a loop's being one round
+//!
 //! [[style.runs]]               # optional: some words in a look of their own,
 //! start = 0                    # counted in characters of `content`
 //! end = 3
@@ -47,7 +52,7 @@
 use std::path::{Path, PathBuf};
 
 use concat_host::AppDirs;
-use concat_project::model::{TextAlign, TextStyle};
+use concat_project::model::{ClipMotion, TextAlign, TextStyle};
 use serde::Deserialize;
 
 /// One look a title can be given.
@@ -70,6 +75,9 @@ pub struct TextPreset {
     /// Latin and the first two characters of its words for any other
     /// writing, so a Japanese card shows Japanese.
     pub sample: String,
+    /// The entrance, exit and loop a title placed in this look starts
+    /// with, when the preset has them.
+    pub motion: Option<ClipMotion>,
 }
 
 #[derive(Deserialize)]
@@ -91,6 +99,9 @@ struct PresetFile {
     sample: Option<String>,
     #[serde(default)]
     style: PresetStyle,
+    /// How a title in this look moves; see [`TextPreset::motion`].
+    #[serde(default)]
+    motion: Option<ClipMotion>,
 }
 
 /// A title's fields, every one optional, laid over the default style.
@@ -280,6 +291,7 @@ fn parse(text: &str, folder: Option<&Path>) -> Option<(i64, TextPreset)> {
             font,
             language,
             sample,
+            motion: file.motion.and_then(ClipMotion::tidy),
         },
     ))
 }
@@ -384,6 +396,47 @@ mod tests {
             assert!(parse(text, None).is_some(), "does not parse:\n{text}");
         }
         assert_eq!(builtin().len(), embedded::BUILTIN.len());
+    }
+
+    /// A shipped look's movement names only moves the engine knows, so
+    /// no card places a title that silently stands still.
+    #[test]
+    fn every_shipped_motion_names_a_known_move() {
+        use concat_core::motion::{Entrance, Repeat};
+        let mut moving = 0;
+        for preset in builtin() {
+            let Some(motion) = preset.motion else {
+                continue;
+            };
+            moving += 1;
+            for pick in [&motion.intro, &motion.outro].into_iter().flatten() {
+                assert!(
+                    Entrance::parse(&pick.preset).is_some(),
+                    "{}: {}",
+                    preset.id,
+                    pick.preset
+                );
+            }
+            if let Some(pick) = &motion.repeat {
+                assert!(
+                    Repeat::parse(&pick.preset).is_some(),
+                    "{}: {}",
+                    preset.id,
+                    pick.preset
+                );
+            }
+        }
+        assert!(moving >= 15, "the dark fantasy and Noxara looks move");
+    }
+
+    #[test]
+    fn a_motion_block_reads_with_its_seconds() {
+        let text = "id = \"t.m\"\nname = \"M\"\n[motion]\nin = { preset = \"pop\", duration = 0.4 }\nloop = { preset = \"float\", duration = 3.0 }\n";
+        let (_, preset) = parse(text, None).expect("parses");
+        let motion = preset.motion.expect("moves");
+        assert_eq!(motion.intro.expect("in").duration, 0.4);
+        assert!(motion.outro.is_none());
+        assert_eq!(motion.repeat.expect("loop").preset, "float");
     }
 
     #[test]

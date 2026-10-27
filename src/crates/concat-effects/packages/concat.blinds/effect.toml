@@ -1,0 +1,22 @@
+format = 2
+
+[effect]
+id = "concat.blinds"
+name = "Blinds"
+kind = "transition"
+category = "Wipe"
+order = 32
+description = "Venetian blinds turn from one shot to the next."
+
+[[param]]
+key = "slats"
+label = "Slats"
+type = "int"
+min = 4
+max = 30
+default = 10
+step = 1
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

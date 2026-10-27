@@ -8,7 +8,7 @@ import {
 import {
     CurveData, CurveGroupData, WheelData, WheelGroupData,
 } from "inspector/grading.slint";
-import { MediaFilter, MediaItemData, TextPresetData } from "workspace/media-pane.slint";
+import { BackgroundCardData, MediaFilter, MediaItemData, TextPresetData } from "workspace/media-pane.slint";
 import { DockDivider, DockSide, SeatBox } from "dock.slint";
 import { PaneKind } from "workspace/pane-switcher.slint";
 import { MenuItemData } from "primitives/context-menu.slint";
@@ -119,6 +119,10 @@ export global Editor {
     /// The Stickers page placed a shape: which figure, and what to call
     /// the clip, in the interface's language.
     callback library-add-shape(shape: string, label: string);
+    /// The Stickers page's Backgrounds shelf: its cards, set once, and a
+    /// card used.
+    in-out property <[BackgroundCardData]> background-cards;
+    callback library-add-background(id: string);
     callback library-apply-effect(effect-id: string);
     callback library-apply-transition(transition-id: string);
     /// Filters page: lay the look down as a layer at the playhead.

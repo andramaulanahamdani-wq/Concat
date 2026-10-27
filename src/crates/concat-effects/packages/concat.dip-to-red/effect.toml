@@ -1,0 +1,14 @@
+format = 2
+
+[effect]
+id = "concat.dip-to-red"
+name = "Dip to Red"
+kind = "transition"
+category = "Dark"
+shelves = ["Documentary & Horror"]
+order = 40
+description = "Through a deep blood red and out again."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

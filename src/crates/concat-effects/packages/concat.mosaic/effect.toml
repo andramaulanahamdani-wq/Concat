@@ -1,0 +1,22 @@
+format = 2
+
+[effect]
+id = "concat.mosaic"
+name = "Mosaic"
+kind = "transition"
+category = "Glitch"
+order = 46
+description = "The picture breaks into big tiles and comes back together as the next shot."
+
+[[param]]
+key = "size"
+label = "Size"
+min = 10
+max = 100
+default = 50
+step = 1
+unit = "%"
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

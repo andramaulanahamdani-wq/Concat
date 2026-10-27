@@ -49,22 +49,26 @@ pub fn mirror(file: &str) -> String {
 /// the shelf is asked for and never at startup. The schema, and where the
 /// files go, is `docs/AUDIO_LIBRARY.md`.
 pub const SOUNDS_MANIFEST: &str =
-    "https://raw.githubusercontent.com/concatapp/assets/main/audio/manifest.json";
+    "https://raw.githubusercontent.com/andramaulanahamdani-wq/Concat/assets/audio/manifest.json";
 
 /// The repository the sounds live in.
-pub const SOUNDS_REPO: &str = "concatapp/assets";
+pub const SOUNDS_REPO: &str = "andramaulanahamdani-wq/Concat";
 
-/// The release the sounds are mirrored on, so a file moved in the
+/// The branch of it that holds them: an orphan branch of the assets
+/// alone, so the code's history never carries their bytes.
+pub const SOUNDS_BRANCH: &str = "assets";
+
+/// The release the sounds may be mirrored on, so a file moved in the
 /// repository does not take a sound off the shelf.
 pub const SOUNDS_RELEASE: &str = "audio-v1";
 
-/// Where to try for a sound's file, in order: the release, then the
-/// repository. The bytes are checked against the manifest's digest
-/// whichever answers.
+/// Where to try for a sound's file, in order: the branch, then a release
+/// mirror where there is one. The bytes are checked against the
+/// manifest's digest whichever answers.
 pub fn sound_sources(file: &str) -> Vec<String> {
     vec![
+        format!("https://raw.githubusercontent.com/{SOUNDS_REPO}/{SOUNDS_BRANCH}/audio/{file}"),
         format!("https://github.com/{SOUNDS_REPO}/releases/download/{SOUNDS_RELEASE}/{file}"),
-        format!("https://raw.githubusercontent.com/{SOUNDS_REPO}/main/audio/{file}"),
     ]
 }
 

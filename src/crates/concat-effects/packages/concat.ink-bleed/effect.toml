@@ -1,0 +1,14 @@
+format = 2
+
+[effect]
+id = "concat.ink-bleed"
+name = "Ink Bleed"
+kind = "transition"
+category = "Dark"
+shelves = ["Documentary & Horror"]
+order = 41
+description = "Black ink blooms across the frame and drains away on the next shot."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

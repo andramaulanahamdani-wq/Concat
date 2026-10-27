@@ -1,0 +1,18 @@
+id = "concat.df-runes"
+name = "Rune Glow"
+language = "Latin"
+order = 103
+
+[style]
+content = "The Seal Awakens"
+fontFamily = "Uncial Antiqua"
+fontWeight = 400
+fontSize = 0.075
+color = "#8fe3ff"
+strokeWidth = 0.003
+strokeColor = "#06222e"
+
+[motion]
+in = { preset = "grow", duration = 1.0 }
+out = { preset = "fade", duration = 0.6 }
+loop = { preset = "pulse", duration = 2.4 }

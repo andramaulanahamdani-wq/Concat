@@ -1,0 +1,19 @@
+id = "concat.df-subtitle"
+name = "Fantasy Subtitle"
+language = "Latin"
+order = 107
+offsetY = 0.36
+
+[style]
+content = "And so the darkness came"
+fontFamily = "Cinzel"
+fontWeight = 400
+fontSize = 0.048
+color = "#f3ead6"
+strokeWidth = 0.006
+strokeColor = "#000000"
+maxWidth = 0.8
+
+[motion]
+in = { preset = "fade", duration = 0.2 }
+out = { preset = "fade", duration = 0.2 }

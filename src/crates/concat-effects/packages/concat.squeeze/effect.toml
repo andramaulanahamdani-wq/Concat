@@ -1,0 +1,13 @@
+format = 2
+
+[effect]
+id = "concat.squeeze"
+name = "Squeeze"
+kind = "transition"
+category = "Slide"
+order = 45
+description = "The outgoing shot is squeezed off to the side as the incoming one stretches in."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

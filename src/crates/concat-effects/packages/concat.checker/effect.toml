@@ -1,0 +1,22 @@
+format = 2
+
+[effect]
+id = "concat.checker"
+name = "Checkerboard"
+kind = "transition"
+category = "Wipe"
+order = 33
+description = "Squares turn to the incoming shot in a checker: one colour of square, then the other."
+
+[[param]]
+key = "squares"
+label = "Squares"
+type = "int"
+min = 4
+max = 24
+default = 8
+step = 1
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

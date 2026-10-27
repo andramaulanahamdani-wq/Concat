@@ -2,14 +2,13 @@
 
 The Library's **Audio** page has a **Concat** shelf of built-in sounds and
 music (#60). Nothing ships inside the app: the shelf reads a manifest from
-the [`concatapp/assets`](https://github.com/concatapp/assets) repository the
-first time someone asks for it (a "Load Concat sounds" button, never at
+the `assets` branch of this repository the first time someone asks for it (a "Load Concat sounds" button, never at
 startup), and each sound is downloaded the first time it is played or used,
 then checked against its SHA-256 and kept in the app's cache.
 
 This page is what the asset curator produces for that to work.
 
-## Layout in `concatapp/assets`
+## Layout on the `assets` branch
 
 ```text
 audio/
@@ -22,19 +21,21 @@ audio/
 The files sit flat in `audio/`. The app fetches the manifest from:
 
 ```text
-https://raw.githubusercontent.com/concatapp/assets/main/audio/manifest.json
+https://raw.githubusercontent.com/andramaulanahamdani-wq/Concat/assets/audio/manifest.json
 ```
 
 and each sound from, in order:
 
-1. the release mirror: `https://github.com/concatapp/assets/releases/download/audio-v1/<file>`
-2. the repository itself: `https://raw.githubusercontent.com/concatapp/assets/main/audio/<file>`
+1. the branch itself: `https://raw.githubusercontent.com/andramaulanahamdani-wq/Concat/assets/audio/<file>`
+2. a release mirror, when one is made: `https://github.com/andramaulanahamdani-wq/Concat/releases/download/audio-v1/<file>`
 
-Upload every file to the `audio-v1` release as well. Then a file that moves in
-the repository can't break the shelf. Whichever source the bytes come from,
+The `assets` branch is an orphan: it holds the assets alone and shares no
+history with the code. The sounds on it today are all synthesised by
+`scripts/sfx/generate.py` and are CC0; running it again writes the same
+files and the same `manifest.json`, bit for bit. Whichever source the bytes come from,
 they are checked against the manifest's `sha256`. The URLs are constants in
-`src/crates/concat-host/src/models.rs`: `SOUNDS_MANIFEST`, `SOUNDS_REPO` and
-`SOUNDS_RELEASE`.
+`src/crates/concat-host/src/models.rs`: `SOUNDS_MANIFEST`, `SOUNDS_REPO`,
+`SOUNDS_BRANCH` and `SOUNDS_RELEASE`.
 
 Until `audio/manifest.json` exists (the request answers 404), the shelf says
 "Sound library coming soon".

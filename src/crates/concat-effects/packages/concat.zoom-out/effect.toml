@@ -1,0 +1,13 @@
+format = 2
+
+[effect]
+id = "concat.zoom-out"
+name = "Zoom Out"
+kind = "transition"
+category = "Zoom"
+order = 37
+description = "The outgoing shot shrinks away into the incoming one."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

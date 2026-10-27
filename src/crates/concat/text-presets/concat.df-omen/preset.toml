@@ -1,0 +1,18 @@
+id = "concat.df-omen"
+name = "Omen"
+language = "Latin"
+order = 106
+
+[style]
+content = "DO NOT LOOK BACK"
+fontFamily = "Creepster"
+fontWeight = 400
+fontSize = 0.09
+color = "#c8102e"
+strokeWidth = 0.003
+strokeColor = "#000000"
+
+[motion]
+in = { preset = "glitch", duration = 0.8 }
+out = { preset = "flicker", duration = 0.6 }
+loop = { preset = "flicker", duration = 2.0 }

@@ -31,6 +31,7 @@ mod ui {
     slint::include_modules!();
 }
 
+mod backgrounds;
 mod batch_volume;
 mod chips;
 mod dock;
@@ -943,6 +944,19 @@ fn start(project: Option<std::path::PathBuf>, smoke: bool) -> Result<(), slint::
         state.place_at_playhead(&format!("text:{preset}:Title"));
     }));
     // A figure from the Stickers page, named in the interface's language.
+    editor.set_background_cards(ModelRc::from(Rc::new(VecModel::from(
+        backgrounds::ALL
+            .iter()
+            .map(|ground| BackgroundCardData {
+                id: ground.id.into(),
+                name: ground.name.into(),
+                art: ground.thumbnail(),
+            })
+            .collect::<Vec<_>>(),
+    ))));
+    editor.on_library_add_background(on_window!(|state, id: SharedString| {
+        state.place_background(&id);
+    }));
     editor.on_library_add_shape(on_window!(
         |state, shape: SharedString, label: SharedString| {
             state.place_at_playhead(&format!("shape:{shape}:{label}"));

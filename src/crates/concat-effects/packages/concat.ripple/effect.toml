@@ -1,0 +1,22 @@
+format = 2
+
+[effect]
+id = "concat.ripple"
+name = "Ripple"
+kind = "transition"
+category = "Distort"
+order = 35
+description = "Rings run out across the water and the next shot surfaces through them."
+
+[[param]]
+key = "amount"
+label = "Amount"
+min = 0
+max = 100
+default = 50
+step = 1
+unit = "%"
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

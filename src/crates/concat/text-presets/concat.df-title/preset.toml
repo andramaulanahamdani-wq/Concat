@@ -1,0 +1,19 @@
+id = "concat.df-title"
+name = "Dark Fantasy Title"
+language = "Latin"
+order = 100
+
+[style]
+content = "THE FALLEN KINGDOM"
+fontFamily = "Cinzel Decorative"
+fontWeight = 700
+fontSize = 0.085
+color = "#d9b45a"
+strokeWidth = 0.004
+strokeColor = "#1a1206"
+tracking = 0.006
+
+[motion]
+in = { preset = "rise", duration = 1.4 }
+out = { preset = "fade", duration = 0.9 }
+loop = { preset = "breathe", duration = 4.0 }

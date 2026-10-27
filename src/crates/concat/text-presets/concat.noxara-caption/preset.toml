@@ -1,0 +1,20 @@
+id = "concat.noxara-caption"
+name = "Noxara Caption Box"
+language = "Latin"
+order = 112
+offsetY = 0.36
+
+[style]
+content = "Some doors should stay closed"
+fontFamily = "Hanken Grotesk"
+fontWeight = 700
+fontSize = 0.045
+color = "#f4ecff"
+background = "#120822d9"
+backgroundRadius = 0.012
+shadow = false
+maxWidth = 0.8
+
+[motion]
+in = { preset = "from-bottom", duration = 0.25 }
+out = { preset = "fade", duration = 0.2 }

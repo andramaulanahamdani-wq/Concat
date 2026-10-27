@@ -1,0 +1,18 @@
+id = "concat.noxara-warning"
+name = "Noxara Warning"
+language = "Latin"
+order = 115
+
+[style]
+content = "IT IS STILL HERE"
+fontFamily = "Pirata One"
+fontWeight = 400
+fontSize = 0.1
+color = "#ff2a3d"
+strokeWidth = 0.004
+strokeColor = "#0a0005"
+
+[motion]
+in = { preset = "glitch", duration = 0.7 }
+out = { preset = "fade", duration = 0.5 }
+loop = { preset = "tremble", duration = 1.0 }

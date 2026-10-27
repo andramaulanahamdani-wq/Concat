@@ -142,7 +142,7 @@ export component AnimationPanel inherits VerticalLayout {
                 enabled: root.chosen != "";
                 value <=> root.seconds;
                 minimum: 0.1;
-                maximum: root.slot == 2 ? 5 : 3;
+                maximum: root.slot == 2 ? 10 : 3;
                 step: 0.05;
                 default-value: root.slot == 2 ? 1 : 0.5;
                 fmt: ParamFormat.seconds2;

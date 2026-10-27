@@ -1,0 +1,17 @@
+id = "concat.df-ancient"
+name = "Ancient Script"
+language = "Latin"
+order = 102
+
+[style]
+content = "Here lies the old world"
+fontFamily = "UnifrakturMaguntia"
+fontWeight = 400
+fontSize = 0.08
+color = "#e4d3a8"
+strokeWidth = 0.003
+strokeColor = "#2b1d0e"
+
+[motion]
+in = { preset = "fade", duration = 1.6 }
+out = { preset = "fade", duration = 1.0 }

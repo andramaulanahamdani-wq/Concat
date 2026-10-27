@@ -1,0 +1,14 @@
+format = 2
+
+[effect]
+id = "concat.ash-burn"
+name = "Ash Burn"
+kind = "transition"
+category = "Dark"
+shelves = ["Documentary & Horror"]
+order = 42
+description = "The outgoing shot burns away from glowing edges, leaving the next."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

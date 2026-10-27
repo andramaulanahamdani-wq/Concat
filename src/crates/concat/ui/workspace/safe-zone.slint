@@ -1,0 +1,114 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Jareer Abdullah and Concat contributors
+
+// Where a platform's own buttons and captions will sit over the picture,
+// drawn over the monitor so a title or a face is kept clear of them: the
+// covered margins shaded, the safe area outlined, and for the vertical
+// feeds a sketch of the buttons down the right and the caption lines along
+// the bottom, as the apps lay them out.
+//
+// Picture only: nothing here takes a pointer, so every press still reaches
+// the stage beneath. The margins are fractions of the frame, read off each
+// app's own layout at 1080 × 1920; they are a guide, not a promise - the
+// apps move their furniture between versions.
+
+/// The platforms the picker offers, after "none" at index 0, in its order.
+export global SafeZones {
+    out property <[string]> names: ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube", "Story"];
+    // Covered margins as fractions of the frame: top, bottom, left, right.
+    out property <[float]> top: [0.08, 0.12, 0.08, 0.05, 0.13];
+    out property <[float]> bottom: [0.25, 0.22, 0.22, 0.05, 0.13];
+    out property <[float]> left: [0.06, 0.06, 0.05, 0.05, 0.06];
+    out property <[float]> right: [0.14, 0.12, 0.14, 0.05, 0.06];
+    /// A feed with buttons down the right and a caption at the foot.
+    out property <[bool]> feed: [true, true, true, false, false];
+}
+
+export component SafeZoneOverlay inherits Rectangle {
+    /// 1 and up names a platform in `SafeZones`; 0 draws nothing.
+    in property <int> zone;
+
+    property <int> at: root.zone - 1;
+    property <length> t: root.height * SafeZones.top[root.at];
+    property <length> b: root.height * SafeZones.bottom[root.at];
+    property <length> l: root.width * SafeZones.left[root.at];
+    property <length> r: root.width * SafeZones.right[root.at];
+    property <color> shade: #ff2d2d30;
+    property <color> edge: #ff6b6b;
+
+    // The covered margins: top and bottom full width, the sides between.
+    Rectangle { x: 0; y: 0; width: root.width; height: root.t; background: root.shade; }
+    Rectangle { x: 0; y: root.height - root.b; width: root.width; height: root.b; background: root.shade; }
+    Rectangle { x: 0; y: root.t; width: root.l; height: root.height - root.t - root.b; background: root.shade; }
+    Rectangle {
+        x: root.width - root.r;
+        y: root.t;
+        width: root.r;
+        height: root.height - root.t - root.b;
+        background: root.shade;
+    }
+
+    // The safe area's edge.
+    Rectangle {
+        x: root.l;
+        y: root.t;
+        width: root.width - root.l - root.r;
+        height: root.height - root.t - root.b;
+        border-width: 1px;
+        border-color: root.edge;
+    }
+
+    // A widescreen frame's second, inner line: where titles stay.
+    if !SafeZones.feed[root.at]: Rectangle {
+        x: root.width * 0.1;
+        y: root.height * 0.1;
+        width: root.width * 0.8;
+        height: root.height * 0.8;
+        border-width: 1px;
+        border-color: root.edge.with-alpha(0.6);
+    }
+
+    // The feed's buttons: four discs down the right, over its margin.
+    for n in [0, 1, 2, 3]: Rectangle {
+        visible: SafeZones.feed[root.at];
+        property <length> size: Math.min(root.r * 0.6, root.width * 0.08);
+        x: root.width - root.r / 2 - self.size / 2;
+        y: root.height - root.b - (4 - n) * self.size * 1.7;
+        width: self.size;
+        height: self.size;
+        border-radius: self.size / 2;
+        background: #ffffff40;
+        border-width: 1px;
+        border-color: #ffffff80;
+    }
+
+    // The feed's caption: a name and two lines of text at the foot.
+    for n in [0, 1, 2]: Rectangle {
+        visible: SafeZones.feed[root.at];
+        x: root.l;
+        y: root.height - root.b + root.b * 0.18 + n * root.b * 0.16;
+        width: (root.width - root.l - root.r) * (n == 0 ? 0.35 : n == 1 ? 0.8 : 0.55);
+        height: root.b * 0.08;
+        border-radius: self.height / 2;
+        background: #ffffff40;
+    }
+
+    // Which platform this is, in the safe area's corner.
+    Rectangle {
+        x: root.l + 6px;
+        y: root.t + 6px;
+        width: name.preferred-width + 12px;
+        height: 18px;
+        border-radius: 9px;
+        background: #000000a0;
+
+        name := Text {
+            x: 6px;
+            height: parent.height;
+            text: SafeZones.names[root.at];
+            color: #ffffff;
+            font-size: 10px;
+            vertical-alignment: center;
+        }
+    }
+}

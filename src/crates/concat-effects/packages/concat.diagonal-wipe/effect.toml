@@ -1,0 +1,22 @@
+format = 2
+
+[effect]
+id = "concat.diagonal-wipe"
+name = "Diagonal Wipe"
+kind = "transition"
+category = "Wipe"
+order = 38
+description = "A diagonal edge sweeps from the top left corner."
+
+[[param]]
+key = "softness"
+label = "Softness"
+min = 0
+max = 100
+default = 15
+step = 1
+unit = "%"
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

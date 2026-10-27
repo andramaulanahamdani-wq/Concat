@@ -4176,15 +4176,16 @@ impl Studio {
         duration: f64,
         preset: &str,
     ) -> Option<String> {
-        let (style, offset_y, font) = match self.text_presets.iter().find(|held| held.id == preset)
-        {
-            Some(found) => (
-                found.style.clone(),
-                found.offset_y,
-                presets::install_font(&self.host.dirs, found),
-            ),
-            None => (new_title_style(&self.prefs), None, None),
-        };
+        let (style, offset_y, font, motion) =
+            match self.text_presets.iter().find(|held| held.id == preset) {
+                Some(found) => (
+                    found.style.clone(),
+                    found.offset_y,
+                    presets::install_font(&self.host.dirs, found),
+                    found.motion.clone(),
+                ),
+                None => (new_title_style(&self.prefs), None, None, None),
+            };
         // Over the picture, not under it: the first free lane above every
         // occupied one, minted at the top when there is none. A drop onto a
         // lane names its track and is placed there regardless.
@@ -4196,12 +4197,23 @@ impl Studio {
             offset_y,
             above: true,
         };
-        match font {
+        let created = match font {
             Some((family, path)) => self.apply(Command::Batch {
                 commands: vec![Command::AddFont { family, path }, add],
             }),
             None => self.apply(add),
+        };
+        // The look's own movement, once the title has an id to give it to.
+        if let (Some(clip_id), Some(motion)) = (created.clone(), motion) {
+            self.apply(Command::UpdateClip {
+                clip_id,
+                patch: ClipPatch {
+                    motion: Some(Some(motion)),
+                    ..ClipPatch::default()
+                },
+            });
         }
+        created
     }
 
     /// A shape from the Stickers page, placed the way a title is: over

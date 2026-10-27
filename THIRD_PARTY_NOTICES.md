@@ -115,6 +115,14 @@ file's licence is beside it in `src/crates/concat-text/fonts/`, as
 - **Emilys Candy**: The Emilys Candy Project Authors. OFL. See `fonts/LICENSE-EmilysCandy.txt`.
 - **Mystery Quest**: The Mystery Quest Project Authors. OFL. See `fonts/LICENSE-MysteryQuest.txt`.
 - **Zen Tokyo Zoo**: The Zen Tokyo Zoo Project Authors. OFL. See `fonts/LICENSE-ZenTokyoZoo.txt`.
+- **Cinzel**: Copyright 2020 The Cinzel Project Authors. OFL. See `fonts/LICENSE-Cinzel.txt`.
+- **Cinzel Decorative**: Copyright 2012 Natanael Gama. OFL. See `fonts/LICENSE-CinzelDecorative.txt`.
+- **UnifrakturMaguntia**: Copyright 2010 j. 'mach' wust. OFL. See `fonts/LICENSE-UnifrakturMaguntia.txt`.
+- **Pirata One**: Copyright 2012 Rodrigo Fuenzalida, Nicolas Massi. OFL. See `fonts/LICENSE-PirataOne.txt`.
+- **Uncial Antiqua**: Copyright 2011 Brian J. Bonislawsky DBA Astigmatic (AOETI). OFL. See `fonts/LICENSE-UncialAntiqua.txt`.
+- **Metamorphous**: Copyright 2011-2012 Sorkin Type Co. OFL. See `fonts/LICENSE-Metamorphous.txt`.
+- **Creepster**: Copyright 2011 Font Diner, Inc. OFL. See `fonts/LICENSE-Creepster.txt`.
+- **Special Elite**: Copyright 2010 Brian J. Bonislawsky DBA Astigmatic (AOETI). Apache License 2.0. See `fonts/LICENSE-SpecialElite.txt`.
 
 The Noto faces in `src/crates/concat-text/fonts/` are the fallback for the
 scripts the other faces do not draw, in the interface and in titles and

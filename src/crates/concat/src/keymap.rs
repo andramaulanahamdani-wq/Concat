@@ -89,9 +89,11 @@ pub const ACTIONS: &[Action] = &[
         id: "duplicate",
         defaults: &["ctrl+d"],
     },
+    // CapCut's cut: the clip under the playhead splits on the key itself,
+    // B or C as well as Ctrl+B, rather than the key picking up a blade.
     Action {
         id: "split",
-        defaults: &["ctrl+b"],
+        defaults: &["ctrl+b", "b", "c"],
     },
     Action {
         id: "delete",
@@ -119,9 +121,11 @@ pub const ACTIONS: &[Action] = &[
         id: "delete-right",
         defaults: &["w"],
     },
+    // The blade itself, for cutting where the pointer is rather than
+    // where the playhead is; B alone splits now, as CapCut's does.
     Action {
         id: "split-tool",
-        defaults: &["b"],
+        defaults: &["shift+b"],
     },
     Action {
         id: "mute",

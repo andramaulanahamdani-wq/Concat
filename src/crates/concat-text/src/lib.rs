@@ -313,13 +313,13 @@ const BUNDLED: [&[u8]; 5] = [
 /// The base fonts every title can use, whatever the machine has installed:
 /// a working set of sans, serif, display, comic and script faces, at the
 /// weights a title wants. The text presets are built on them. Each is
-/// under the SIL Open Font License, Permanent Marker and Kosugi Maru
-/// under Apache 2.0; the licences are beside the files in fonts/. Pixelify
+/// under the SIL Open Font License, Permanent Marker, Kosugi Maru and
+/// Special Elite under Apache 2.0; the licences are beside the files in fonts/. Pixelify
 /// Sans and Google Sans Code are variable fonts, drawn at their default
 /// (regular) weight: fontdb sets no variation axes. Kosugi Maru carries
 /// Japanese, Secular One and Rubik Scribble Hebrew. The window registers the
 /// same bytes for its preset cards (concat's fonts.rs).
-pub const BASE_FONTS: [&[u8]; 41] = [
+pub const BASE_FONTS: [&[u8]; 49] = [
     include_bytes!("../fonts/Inter-Regular.ttf"),
     include_bytes!("../fonts/Inter-SemiBold.ttf"),
     include_bytes!("../fonts/Inter-Bold.ttf"),
@@ -361,6 +361,16 @@ pub const BASE_FONTS: [&[u8]; 41] = [
     include_bytes!("../fonts/EmilysCandy-Regular.ttf"),
     include_bytes!("../fonts/MysteryQuest-Regular.ttf"),
     include_bytes!("../fonts/ZenTokyoZoo-Regular.ttf"),
+    // The dark fantasy and true-crime faces: carved capitals, blackletter,
+    // uncial, a typewriter and a dripping horror face.
+    include_bytes!("../fonts/Cinzel-Variable.ttf"),
+    include_bytes!("../fonts/CinzelDecorative-Bold.ttf"),
+    include_bytes!("../fonts/UnifrakturMaguntia-Book.ttf"),
+    include_bytes!("../fonts/PirataOne-Regular.ttf"),
+    include_bytes!("../fonts/UncialAntiqua-Regular.ttf"),
+    include_bytes!("../fonts/Metamorphous-Regular.ttf"),
+    include_bytes!("../fonts/Creepster-Regular.ttf"),
+    include_bytes!("../fonts/SpecialElite-Regular.ttf"),
 ];
 
 /// Noto Sans CJK SC, cut to GB 2312, Big5 level 1, JIS X 0208, KS X 1001's

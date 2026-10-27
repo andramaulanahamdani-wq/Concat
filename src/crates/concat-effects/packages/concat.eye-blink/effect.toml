@@ -1,0 +1,14 @@
+format = 2
+
+[effect]
+id = "concat.eye-blink"
+name = "Eye Blink"
+kind = "transition"
+category = "Dark"
+shelves = ["Documentary & Horror"]
+order = 45
+description = "Eyelids close over the outgoing shot and open on the next, as someone waking."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

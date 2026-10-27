@@ -1,0 +1,14 @@
+format = 2
+
+[effect]
+id = "concat.letterbox-close"
+name = "Letterbox Close"
+kind = "transition"
+category = "Cinematic"
+shelves = ["Documentary & Horror"]
+order = 52
+description = "Black bars close in from the top and bottom and open again on the next shot."
+
+[transition]
+entry = "effect.wgsl"
+fallback = "cross-fade"

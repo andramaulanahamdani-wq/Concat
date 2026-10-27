@@ -1,0 +1,19 @@
+id = "concat.noxara-quote"
+name = "Noxara Quote"
+language = "Latin"
+order = 116
+
+[style]
+content = "“The night remembers.”"
+fontFamily = "Metamorphous"
+fontWeight = 400
+fontSize = 0.065
+color = "#d8c4ff"
+strokeWidth = 0.003
+strokeColor = "#0d0019"
+maxWidth = 0.75
+
+[motion]
+in = { preset = "fade", duration = 1.4 }
+out = { preset = "fade", duration = 1.0 }
+loop = { preset = "float", duration = 4.0 }

@@ -1,0 +1,17 @@
+id = "concat.df-legend"
+name = "Legend"
+language = "Latin"
+order = 105
+
+[style]
+content = "A Legend Untold"
+fontFamily = "Metamorphous"
+fontWeight = 400
+fontSize = 0.075
+color = "#f0cf7a"
+strokeWidth = 0.003
+strokeColor = "#1b1408"
+
+[motion]
+in = { preset = "swing", duration = 1.0 }
+out = { preset = "rise", duration = 0.7 }

@@ -285,7 +285,7 @@ fn now() -> u64 {
 
 // ── Concat's own sounds ─────────────────────────────────────────────────
 
-/// The Concat shelf's manifest, as `concatapp/assets/audio/manifest.json`
+/// The Concat shelf's manifest, as the `assets` branch's `audio/manifest.json`
 /// has it; the schema is `docs/AUDIO_LIBRARY.md`.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct Catalogue {
