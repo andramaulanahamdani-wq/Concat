@@ -895,6 +895,79 @@ impl MaskShape {
     }
 }
 
+/// A clip's ready-made movement: how it comes in, how it goes out, and
+/// what it does while it is up, each a preset picked by name. The names
+/// are `concat_core::motion`'s; a name this build does not know is kept
+/// and plays as nothing, so a newer file round-trips.
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[derive(Clone, PartialEq, Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct ClipMotion {
+    /// The entrance: "fade", "from-top", "pop", "drop", "flicker" and the
+    /// rest of `concat_core::motion::Entrance`.
+    #[serde(rename = "in", skip_serializing_if = "Option::is_none")]
+    pub intro: Option<MotionPick>,
+    /// The exit, from the same list as the entrance, played backwards.
+    #[serde(rename = "out", skip_serializing_if = "Option::is_none")]
+    pub outro: Option<MotionPick>,
+    /// The loop: "pulse", "float", "shake", "flicker" and the rest of
+    /// `concat_core::motion::Repeat`. Its duration is one round.
+    #[serde(rename = "loop", skip_serializing_if = "Option::is_none")]
+    pub repeat: Option<MotionPick>,
+}
+
+/// One preset and how long it takes, in seconds.
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct MotionPick {
+    /// The preset's name.
+    pub preset: String,
+    /// Seconds: the entrance's or the exit's length, or one round of a
+    /// loop.
+    pub duration: f64,
+}
+
+impl Default for MotionPick {
+    fn default() -> Self {
+        MotionPick {
+            preset: String::new(),
+            duration: 0.5,
+        }
+    }
+}
+
+impl ClipMotion {
+    /// The shortest a pick may take, and the longest, in seconds.
+    pub const MIN_DURATION: f64 = 0.1;
+    /// See [`ClipMotion::MIN_DURATION`].
+    pub const MAX_DURATION: f64 = 10.0;
+
+    /// True when nothing is picked.
+    pub fn is_empty(&self) -> bool {
+        self.intro.is_none() && self.outro.is_none() && self.repeat.is_none()
+    }
+
+    /// The durations held into range, a non-finite one replaced by half a
+    /// second, picks with no name dropped, and None for nothing picked.
+    pub fn tidy(mut self) -> Option<ClipMotion> {
+        for pick in [&mut self.intro, &mut self.outro, &mut self.repeat] {
+            if let Some(held) = pick.take().filter(|held| !held.preset.is_empty()) {
+                let duration = if held.duration.is_finite() {
+                    held.duration
+                } else {
+                    0.5
+                };
+                *pick = Some(MotionPick {
+                    duration: duration.clamp(Self::MIN_DURATION, Self::MAX_DURATION),
+                    ..held
+                });
+            }
+        }
+        (!self.is_empty()).then_some(self)
+    }
+}
+
 /// A shape that keeps part of a clip's picture: CapCut's Mask. Drawn over
 /// the picture as it is seen - after the crop and the flips, before the
 /// placement - so it moves, scales and turns with the clip, and multiplies
@@ -1973,6 +2046,11 @@ pub struct Clip {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     #[serde(deserialize_with = "wire::list")]
     pub keys: Vec<ClipKey>,
+    /// The entrance, exit and loop picked from the presets, over the keys;
+    /// see [`ClipMotion`].
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(deserialize_with = "wire::maybe")]
+    pub motion: Option<ClipMotion>,
     /// Mirrored left to right.
     #[serde(default, skip_serializing_if = "is_false")]
     pub flip_h: bool,
@@ -2134,6 +2212,7 @@ impl Clip {
             preserve_pitch: true,
             speed_curve: None,
             keys: Vec::new(),
+            motion: None,
             flip_h: false,
             flip_v: false,
             blend: String::new(),
@@ -2229,6 +2308,7 @@ impl Clip {
                 entry.sort_keys();
             }
         }
+        self.motion = self.motion.take().and_then(ClipMotion::tidy);
         self.text = self.text.take().map(TextStyle::tidy);
         self.shape = self.shape.take().map(ShapeStyle::tidy);
         self.background = self.background.take().map(Background::tidy);
@@ -2677,7 +2757,11 @@ pub struct VideoSettings {
     /// exported in a format that keeps alpha; a format that does not
     /// gets black there. Left out of the document while it is opaque
     /// black, so those documents stay as they were.
-    #[serde(default = "opaque_black", skip_serializing_if = "is_black", with = "hex_rgba")]
+    #[serde(
+        default = "opaque_black",
+        skip_serializing_if = "is_black",
+        with = "hex_rgba"
+    )]
     #[cfg_attr(feature = "schema", schemars(with = "String"))]
     pub canvas: [u8; 4],
 }

@@ -17,6 +17,9 @@ serde_json.workspace = true
 
 [dev-dependencies]
 tempfile = "3"
+# The animation presets clip_update's description lists, to hold the list
+# to the engine's.
+concat-core.workspace = true
 
 [lints]
 workspace = true

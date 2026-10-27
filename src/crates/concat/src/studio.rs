@@ -1293,6 +1293,52 @@ fn is_lut(package: &concat_effects::catalogue::Package) -> bool {
     package.kind() == PackageKind::Filter && package.lut().is_some()
 }
 
+/// One of a clip's three animation slots; see `Studio::clip_motion_set`.
+#[derive(Clone, Copy)]
+enum MotionSlot {
+    In,
+    Out,
+    Loop,
+}
+
+impl MotionSlot {
+    /// This slot of `motion`.
+    fn of(self, motion: &mut model::ClipMotion) -> &mut Option<model::MotionPick> {
+        match self {
+            MotionSlot::In => &mut motion.intro,
+            MotionSlot::Out => &mut motion.outro,
+            MotionSlot::Loop => &mut motion.repeat,
+        }
+    }
+
+    /// How long a pick in this slot starts at: half a second in or out,
+    /// a second a round.
+    fn default_seconds(self) -> f64 {
+        match self {
+            MotionSlot::Loop => 1.0,
+            _ => 0.5,
+        }
+    }
+}
+
+/// The move picked in `slot` of `clip`, by id; empty for none.
+fn motion_preset(clip: &Clip, slot: MotionSlot) -> String {
+    let mut motion = clip.motion.clone().unwrap_or_default();
+    slot.of(&mut motion)
+        .as_ref()
+        .map(|pick| pick.preset.clone())
+        .unwrap_or_default()
+}
+
+/// How long the move in `slot` of `clip` takes, or what a pick there
+/// would start at.
+fn motion_seconds(clip: &Clip, slot: MotionSlot) -> f64 {
+    let mut motion = clip.motion.clone().unwrap_or_default();
+    slot.of(&mut motion)
+        .as_ref()
+        .map_or(slot.default_seconds(), |pick| pick.duration)
+}
+
 /// One kind's shelves for the inspector: the shelf labels, in catalogue
 /// order, and every package on them with the index of its shelf. Only the
 /// packages `keep` takes are shelved at all.
@@ -4443,6 +4489,58 @@ impl Studio {
         self.selected_transition()
             .map(|clip| clip.id.clone())
             .or_else(|| self.sole_selection())
+    }
+
+    /// Picks `preset` for the selected clips' entrance (`slot` 0), exit (1)
+    /// or loop (2), taking `seconds` - or takes it off, for an empty
+    /// `preset`. The other two slots are left as they are. One undo step
+    /// for the whole selection.
+    pub fn clip_motion_set(&mut self, slot: i32, preset: &str, seconds: f32) {
+        let slot = match slot {
+            0 => MotionSlot::In,
+            1 => MotionSlot::Out,
+            _ => MotionSlot::Loop,
+        };
+        let pick = (!preset.is_empty()).then(|| model::MotionPick {
+            preset: preset.to_owned(),
+            duration: f64::from(seconds),
+        });
+        let mut commands: Vec<Command> = self
+            .edit_targets()
+            .iter()
+            .filter_map(|id| self.clip(id))
+            // What draws a picture of its own: not `is_visual`, which
+            // leaves titles and shapes out, and they are what moves most.
+            .filter(|clip| {
+                matches!(
+                    clip.kind,
+                    model::ClipKind::Video
+                        | model::ClipKind::Image
+                        | model::ClipKind::Text
+                        | model::ClipKind::Shape
+                )
+            })
+            .map(|clip| {
+                let mut motion = clip.motion.clone().unwrap_or_default();
+                *slot.of(&mut motion) = pick.clone();
+                Command::UpdateClip {
+                    clip_id: clip.id.clone(),
+                    patch: ClipPatch {
+                        motion: Some(motion.tidy()),
+                        ..ClipPatch::default()
+                    },
+                }
+            })
+            .collect();
+        match commands.len() {
+            0 => {}
+            1 => {
+                self.apply(commands.remove(0));
+            }
+            _ => {
+                self.apply(Command::Batch { commands });
+            }
+        }
     }
 
     /// Takes the transition off its clip, leaving a plain cut.
@@ -11137,6 +11235,12 @@ impl Studio {
             mask_feather: shown(clip, model::KeyProperty::MaskFeather, at) as f32,
             fade_in: clip.fade_in as f32,
             fade_out: clip.fade_out as f32,
+            motion_in: motion_preset(clip, MotionSlot::In).into(),
+            motion_out: motion_preset(clip, MotionSlot::Out).into(),
+            motion_loop: motion_preset(clip, MotionSlot::Loop).into(),
+            motion_in_duration: motion_seconds(clip, MotionSlot::In) as f32,
+            motion_out_duration: motion_seconds(clip, MotionSlot::Out) as f32,
+            motion_loop_duration: motion_seconds(clip, MotionSlot::Loop) as f32,
             content: text.content.as_str().into(),
             font_family: text.font_family.trim_matches('"').into(),
             family_row: family_row.unwrap_or(0) as i32,

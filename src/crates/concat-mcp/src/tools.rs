@@ -315,7 +315,7 @@ pub fn catalogue() -> Vec<Tool> {
         command(
             "clip_update",
             "Change a clip",
-            "Changes only the fields given in `patch`: volume (gain, 1 is unchanged, may exceed 1), fadeIn/fadeOut (seconds), opacity (0-1), muted, flipH/flipV, blend, crop (fractions off each edge, null to remove), videoEffects and filters (the whole chain: a list of {id, params}; ids from `effects_list`), transitionIn ({id, duration} on the cut into the clip, null to remove), text (a title's style, null to remove), mask (see `clip_mask`), background (the clip's own background, null to follow the timeline's) and audioStream.",
+            "Changes only the fields given in `patch`: volume (gain, 1 is unchanged, may exceed 1), fadeIn/fadeOut (seconds), opacity (0-1), muted, flipH/flipV, blend, crop (fractions off each edge, null to remove), videoEffects and filters (the whole chain: a list of {id, params}; ids from `effects_list`), transitionIn ({id, duration} on the cut into the clip, null to remove), text (a title's style, null to remove), mask (see `clip_mask`), background (the clip's own background, null to follow the timeline's), audioStream, and motion (ready-made animation, null to remove: `{\"in\": {preset, duration}, \"out\": {preset, duration}, \"loop\": {preset, duration}}`, durations in seconds, a loop's being one round; in and out presets: fade, from-top, from-bottom, from-left, from-right, fly-top, fly-bottom, fly-left, fly-right, pop, grow, shrink, drop, spin, swing, elastic, flicker, glitch, rise, roll, tilt - out plays the same move backwards; loop presets: pulse, breathe, float, sway, pendulum, shake, tremble, heartbeat, blink, flicker, wobble, spin, glitch, drift, zoom).",
             "updateClip",
         ),
         Tool {
@@ -1132,6 +1132,32 @@ mod tests {
                     .as_str()
                     .is_some_and(|text| text.len() > 40),
                 "{name}"
+            );
+        }
+    }
+
+    /// clip_update names every animation preset the engine plays, so an
+    /// agent never has to guess one.
+    #[test]
+    fn clip_update_lists_every_motion_preset() {
+        use concat_core::motion::{Entrance, Repeat};
+        let listed = Toolbox::new().list();
+        let description = listed
+            .iter()
+            .find(|tool| tool["name"] == "clip_update")
+            .and_then(|tool| tool["description"].as_str())
+            .expect("clip_update")
+            .to_owned();
+        let ids = Entrance::ALL
+            .map(Entrance::id)
+            .into_iter()
+            .chain(Repeat::ALL.map(Repeat::id));
+        for id in ids {
+            assert!(
+                description.contains(&format!(" {id},"))
+                    || description.contains(&format!(" {id} -"))
+                    || description.contains(&format!(" {id})")),
+                "{id} is not listed"
             );
         }
     }

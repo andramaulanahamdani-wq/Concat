@@ -1625,6 +1625,27 @@ fn start(project: Option<std::path::PathBuf>, smoke: bool) -> Result<(), slint::
     editor.on_cutout_clear(on_window!(|state| {
         state.cutout_clear();
     }));
+    // The Animation section's moves never change while the app runs.
+    let strings = |names: Vec<&str>| {
+        ModelRc::from(Rc::new(VecModel::from(
+            names
+                .into_iter()
+                .map(SharedString::from)
+                .collect::<Vec<_>>(),
+        )))
+    };
+    {
+        use concat_core::motion::{Entrance, Repeat};
+        editor.set_motion_entrance_ids(strings(Entrance::ALL.map(Entrance::id).to_vec()));
+        editor.set_motion_entrance_names(strings(Entrance::ALL.map(Entrance::name).to_vec()));
+        editor.set_motion_loop_ids(strings(Repeat::ALL.map(Repeat::id).to_vec()));
+        editor.set_motion_loop_names(strings(Repeat::ALL.map(Repeat::name).to_vec()));
+    }
+    editor.on_clip_motion_set(on_window!(
+        |state, slot: i32, preset: SharedString, seconds: f32| {
+            state.clip_motion_set(slot, &preset, seconds);
+        }
+    ));
     editor.on_clip_enhance_set(on_window!(|state, on: bool| {
         state.clip_enhance_set(on);
     }));

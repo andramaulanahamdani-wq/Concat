@@ -171,6 +171,16 @@ export global Editor {
     /// The families a title can be set in: the bundled face, the user's
     /// own fonts, then the machine's. See `Studio::font_families`.
     in-out property <[string]> font-families;
+    /// The ready-made moves the Animation section offers, by id and by
+    /// name: entrances (also played backwards as exits) and loops. Set
+    /// once from concat_core::motion.
+    in-out property <[string]> motion-entrance-ids;
+    in-out property <[string]> motion-entrance-names;
+    in-out property <[string]> motion-loop-ids;
+    in-out property <[string]> motion-loop-names;
+    /// A move picked, changed or taken off in the Animation section:
+    /// `slot` 0 In, 1 Out, 2 Loop; an empty `preset` is none.
+    callback clip-motion-set(slot: int, preset: string, seconds: float);
     /// The Text inspector's import button: font files picked from disk
     /// join the user's own fonts, for good, and the title is set in the
     /// first of them.

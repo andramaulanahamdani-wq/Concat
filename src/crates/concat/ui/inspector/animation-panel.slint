@@ -1,0 +1,154 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Jareer Abdullah and Concat contributors
+
+import { I18n } from "../i18n.slint";
+import { Theme } from "../theme/theme.slint";
+import { Section, SectionBody } from "../primitives/panel.slint";
+import { SegmentedControl } from "../primitives/segmented-control.slint";
+import { Param, ParamFormat } from "controls.slint";
+import { SelectedClipData } from "../timeline/model.slint";
+
+// The Animation section: how the clip comes in, how it goes out and what
+// it does while it is up, each picked from a grid of ready-made moves
+// (concat_core::motion), with how long it takes under the grid. In and Out
+// share one list - an exit is its entrance played backwards - and Loop has
+// its own, its length one round.
+
+// One move on the grid: its name, lit while it is the one picked.
+component MotionChip inherits Rectangle {
+    in property <string> label;
+    in property <bool> chosen;
+
+    callback clicked();
+
+    border-radius: Theme.r-sm;
+    border-width: 1px;
+    border-color: root.chosen ? Theme.accent : Theme.line;
+    background: root.chosen ? Theme.accent-soft
+        : touch.has-hover ? Theme.field-hover : Theme.field;
+
+    animate background, border-color { duration: 120ms; }
+
+    Text {
+        x: 4px;
+        width: parent.width - 8px;
+        height: parent.height;
+        text: root.label;
+        color: root.chosen || touch.has-hover ? Theme.fg : Theme.fg-muted;
+        font-size: Theme.fs-sm;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+
+    touch := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component AnimationPanel inherits VerticalLayout {
+    in property <SelectedClipData> selected;
+    /// The moves, by the id a project stores and the name the grid shows,
+    /// in the same order; entrances (In and Out) and loops apart.
+    in property <[string]> entrance-ids;
+    in property <[string]> entrance-names;
+    in property <[string]> loop-ids;
+    in property <[string]> loop-names;
+
+    /// `slot` 0 is In, 1 Out and 2 Loop; an empty `preset` takes that one
+    /// off; `seconds` is its length, or a loop's round.
+    callback motion-set(slot: int, preset: string, seconds: float);
+
+    // The segmented control writes `current`, so this is assigned and
+    // never bound; see config-pane's `tab`.
+    property <int> slot;
+    property <[string]> ids: root.slot == 2 ? root.loop-ids : root.entrance-ids;
+    property <[string]> names: root.slot == 2 ? root.loop-names : root.entrance-names;
+    property <string> chosen: root.slot == 0 ? root.selected.motion-in
+        : root.slot == 1 ? root.selected.motion-out
+        : root.selected.motion-loop;
+
+    // Seeded rather than bound, for the reason the clip inspector gives:
+    // the knob writes its own value as it is dragged.
+    property <float> seconds;
+    function seed() {
+        root.seconds = root.slot == 0 ? root.selected.motion-in-duration
+            : root.slot == 1 ? root.selected.motion-out-duration
+            : root.selected.motion-loop-duration;
+    }
+    init => { root.seed(); }
+    changed selected => { root.seed(); }
+    changed slot => { root.seed(); }
+
+    // Three to a row, "None" first.
+    property <int> columns: 3;
+    property <length> gap: 6px;
+    property <length> cell-h: 30px;
+    property <int> rows: Math.ceil((root.ids.length + 1) / root.columns);
+
+    Section {
+        first: true;
+
+        SectionBody {
+            HorizontalLayout {
+                padding-left: Theme.pad;
+                padding-right: Theme.pad;
+
+                SegmentedControl {
+                    options: [
+                        I18n.t("configPane.animationIn"),
+                        I18n.t("configPane.animationOut"),
+                        I18n.t("configPane.animationLoop"),
+                    ];
+                    current: root.slot;
+                    changed(index) => { root.slot = index; }
+                }
+            }
+
+            HorizontalLayout {
+                padding-left: Theme.pad;
+                padding-right: Theme.pad;
+
+                grid := Rectangle {
+                    property <length> cell-w: (self.width - (root.columns - 1) * root.gap) / root.columns;
+                    height: root.rows * root.cell-h + (root.rows - 1) * root.gap;
+
+                    MotionChip {
+                        x: 0;
+                        y: 0;
+                        width: grid.cell-w;
+                        height: root.cell-h;
+                        label: I18n.t("speech.none");
+                        chosen: root.chosen == "";
+                        clicked => { root.motion-set(root.slot, "", root.seconds); }
+                    }
+
+                    for id[index] in root.ids: MotionChip {
+                        x: Math.mod(index + 1, root.columns) * (grid.cell-w + root.gap);
+                        y: Math.floor((index + 1) / root.columns) * (root.cell-h + root.gap);
+                        width: grid.cell-w;
+                        height: root.cell-h;
+                        label: root.names[index];
+                        chosen: root.chosen == id;
+                        clicked => { root.motion-set(root.slot, id, root.seconds); }
+                    }
+                }
+            }
+
+            Param {
+                label: root.slot == 2 ? I18n.t("configPane.animationRound") : I18n.t("common.duration");
+                rail: true;
+                enabled: root.chosen != "";
+                value <=> root.seconds;
+                minimum: 0.1;
+                maximum: root.slot == 2 ? 5 : 3;
+                step: 0.05;
+                default-value: root.slot == 2 ? 1 : 0.5;
+                fmt: ParamFormat.seconds2;
+                unit: "s";
+                changed(v) => { root.motion-set(root.slot, root.chosen, v); }
+            }
+        }
+    }
+}

@@ -13,10 +13,10 @@ use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 
 use crate::model::{
-    AppliedFilter, AudioTrack, Background, Clip, ClipKind, ClipMask, ColorRange, ColorSpace, Crop,
-    CustomFont, Cutout, CutoutMode, Enhanced, Framing, KeyEase, KeyProperty, MediaItem, MediaKind,
-    MediaOrigin, Project, RunStyle, ShapeStyle, SpeedPoint, Stabilize, Stroke, TextStyle, Timeline,
-    Track, Transition, VideoSettings,
+    AppliedFilter, AudioTrack, Background, Clip, ClipKind, ClipMask, ClipMotion, ColorRange,
+    ColorSpace, Crop, CustomFont, Cutout, CutoutMode, Enhanced, Framing, KeyEase, KeyProperty,
+    MediaItem, MediaKind, MediaOrigin, Project, RunStyle, ShapeStyle, SpeedPoint, Stabilize,
+    Stroke, TextStyle, Timeline, Track, Transition, VideoSettings,
 };
 
 mod audio;
@@ -180,6 +180,16 @@ pub struct ClipPatch {
     )]
     #[cfg_attr(feature = "schema", schemars(with = "Option<Background>"))]
     pub background: Option<Option<Background>>,
+    /// The entrance, exit and loop presets, as a whole: absent leaves them
+    /// alone, null takes them all off, a value replaces them, tidied on
+    /// the way in. See `Clip::motion`.
+    #[serde(
+        default,
+        with = "double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
+    #[cfg_attr(feature = "schema", schemars(with = "Option<ClipMotion>"))]
+    pub motion: Option<Option<ClipMotion>>,
 }
 
 /// `Option<Option<T>>` over JSON: absent → None, null → Some(None).

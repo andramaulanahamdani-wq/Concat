@@ -274,6 +274,7 @@ impl Titles {
                     muted: true,
                     volume: 0.0,
                     animation: concat_export::flatten::export_keys(clip),
+                    motion: clip.motion.clone(),
                     flip_h: clip.flip_h,
                     flip_v: clip.flip_v,
                     blend: clip.blend.clone(),

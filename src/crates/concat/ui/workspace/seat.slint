@@ -308,6 +308,11 @@ export component Seat inherits Rectangle {
             clip-set-colour(field, value) => { Editor.clip-set-colour(field, value); }
             clip-commit => { Editor.clip-commit(); }
             font-families: Editor.font-families;
+            motion-entrance-ids: Editor.motion-entrance-ids;
+            motion-entrance-names: Editor.motion-entrance-names;
+            motion-loop-ids: Editor.motion-loop-ids;
+            motion-loop-names: Editor.motion-loop-names;
+            clip-motion-set(slot, preset, seconds) => { Editor.clip-motion-set(slot, preset, seconds); }
             import-font => { Editor.import-font(); }
             text-style-default => { Editor.text-style-default(); }
         }

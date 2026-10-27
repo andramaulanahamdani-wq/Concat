@@ -15,6 +15,7 @@
 //! clip, and the clip asks here.
 
 use crate::mask::ShapeMask;
+use crate::motion::Motion;
 use crate::timeline::Transform;
 
 /// How a key is approached from the one before it: a CSS timing function,
@@ -250,6 +251,9 @@ pub struct Animation {
     /// addition - since a mask is the clip's own and has no preset to be
     /// relative for.
     pub mask: MaskTracks,
+    /// The entrance, exit and loop chosen from the presets, over the keys;
+    /// see [`Motion`].
+    pub motion: Motion,
 }
 
 /// The keys of a mask's numbers; see [`ShapeMask`] for what each is.
@@ -309,15 +313,17 @@ impl Animation {
             && self.opacity.is_empty()
             && self.volume.is_empty()
             && self.mask.is_empty()
+            && self.motion.is_empty()
     }
 
     /// The clip's transform at `x`, a fraction of its length.
     pub fn transform_at(&self, base: Transform, x: f64) -> Transform {
+        let pose = self.motion.pose_at(x);
         Transform {
-            scale: (base.scale * self.scale.value_at(x, 1.0)).max(0.001),
-            offset_x: base.offset_x + self.offset_x.value_at(x, 0.0),
-            offset_y: base.offset_y + self.offset_y.value_at(x, 0.0),
-            rotation: base.rotation + self.rotation.value_at(x, 0.0),
+            scale: (base.scale * self.scale.value_at(x, 1.0) * pose.scale).max(0.001),
+            offset_x: base.offset_x + self.offset_x.value_at(x, 0.0) + pose.dx,
+            offset_y: base.offset_y + self.offset_y.value_at(x, 0.0) + pose.dy,
+            rotation: base.rotation + self.rotation.value_at(x, 0.0) + pose.rotation,
             stretch_x: base.stretch_x,
             stretch_y: base.stretch_y,
         }
@@ -325,7 +331,8 @@ impl Animation {
 
     /// The clip's opacity at `x`.
     pub fn opacity_at(&self, base: f32, x: f64) -> f32 {
-        (f64::from(base) * self.opacity.value_at(x, 1.0)).clamp(0.0, 1.0) as f32
+        let pose = self.motion.pose_at(x);
+        (f64::from(base) * self.opacity.value_at(x, 1.0) * pose.opacity).clamp(0.0, 1.0) as f32
     }
 
     /// The clip's gain at `x`. Unclamped at the top: a key above unity is a

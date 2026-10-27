@@ -140,6 +140,10 @@ pub struct ExportClip {
     /// Empty for none.
     #[serde(default)]
     pub animation: Vec<ExportKey>,
+    /// The entrance, exit and loop presets, in seconds; None for none.
+    /// Turned into fractions of the clip where the clip's length is final.
+    #[serde(default)]
+    pub motion: Option<concat_project::model::ClipMotion>,
     /// Mirrored left to right.
     #[serde(default)]
     pub flip_h: bool,
@@ -338,6 +342,7 @@ impl ExportClip {
             speed_curve: Vec::new(),
             speed_slopes: Vec::new(),
             animation: Vec::new(),
+            motion: None,
             flip_h: false,
             flip_v: false,
             blend: String::new(),
@@ -1061,6 +1066,8 @@ fn last_frame_held(clip: &ExportClip, start: f64, length: f64, frame: f64) -> Ex
         })
         .collect();
     hold.animation.clear();
+    // A held frame stands still: no entrance, exit or loop of its own.
+    hold.motion = None;
     for (property, value) in tails {
         match property.as_str() {
             "scale" => hold.scale = value,

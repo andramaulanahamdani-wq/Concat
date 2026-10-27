@@ -404,6 +404,16 @@ export struct SelectedClipData {
     mask-feather: float,
     fade-in: float,
     fade-out: float,
+    /// The entrance, exit and loop picked from the ready-made moves, by
+    /// id ("" for none), and how long each takes - a loop's being one
+    /// round. A slot with nothing picked carries the length a pick there
+    /// would start at. See AnimationPanel.
+    motion-in: string,
+    motion-out: string,
+    motion-loop: string,
+    motion-in-duration: float,
+    motion-out-duration: float,
+    motion-loop-duration: float,
 
     // the cutout: 0 none, 1 automatic, 2 custom; what it keeps, 0 auto,
     // 1 person, 2 object; how soft its edge is; how many strokes it

@@ -324,6 +324,17 @@ pub(crate) fn build_timeline(
             engine_clip.retime = clip.retime();
         }
         engine_clip.animation = animation_of(&clip.animation);
+        if let Some(motion) = clip
+            .motion
+            .as_ref()
+            .map(|motion| motion_of(motion, clip.duration))
+            && !motion.is_empty()
+        {
+            engine_clip
+                .animation
+                .get_or_insert_with(Animation::default)
+                .motion = motion;
+        }
         engine_clip.blend = concat_core::timeline::Blend::parse(&clip.blend);
         engine_clip.mask = clip.mask.map(|mask| mask.engine());
         engine_clip.overscan = overscan_of(clip);
@@ -464,6 +475,50 @@ pub(crate) fn shaded(effects: &[AppliedFilter]) -> Vec<AppliedFilter> {
         .collect()
 }
 
+/// The engine's presets for a clip `duration` seconds long: each pick's
+/// seconds as a share of the clip. An entrance and an exit that together
+/// would run longer than the clip are shortened in proportion, so the
+/// two meet rather than overlap; a name this build does not know is no
+/// pick at all.
+pub(crate) fn motion_of(
+    motion: &concat_project::model::ClipMotion,
+    duration: f64,
+) -> concat_core::motion::Motion {
+    use concat_core::motion::{Entrance, Motion, Phase, Repeat};
+    if duration <= 0.0 {
+        return Motion::default();
+    }
+    let seconds = |pick: &concat_project::model::MotionPick| pick.duration.max(0.0);
+    let intro = motion
+        .intro
+        .as_ref()
+        .and_then(|pick| Some((Entrance::parse(&pick.preset)?, seconds(pick))));
+    let outro = motion
+        .outro
+        .as_ref()
+        .and_then(|pick| Some((Entrance::parse(&pick.preset)?, seconds(pick))));
+    let ends = intro.map_or(0.0, |(_, s)| s) + outro.map_or(0.0, |(_, s)| s);
+    let fit = if ends > duration {
+        duration / ends
+    } else {
+        1.0
+    };
+    let phase = |(preset, s): (Entrance, f64)| Phase {
+        preset,
+        span: (s * fit / duration).clamp(0.0, 1.0),
+    };
+    Motion {
+        intro: intro.map(phase),
+        outro: outro.map(phase),
+        repeat: motion.repeat.as_ref().and_then(|pick| {
+            Some(Phase {
+                preset: Repeat::parse(&pick.preset)?,
+                span: seconds(pick) / duration,
+            })
+        }),
+    }
+}
+
 /// The engine's keys for a flattened clip's animation, or None for none.
 pub(crate) fn animation_of(keys: &[ExportKey]) -> Option<Animation> {
     use concat_core::animate::{Ease, Key, Track};
@@ -526,6 +581,7 @@ pub(crate) fn animation_of(keys: &[ExportKey]) -> Option<Animation> {
             roundness: Track::new(mask_roundness),
             feather: Track::new(mask_feather),
         },
+        motion: concat_core::motion::Motion::default(),
     };
     (!animation.is_empty()).then_some(animation)
 }
@@ -589,4 +645,53 @@ pub(crate) fn quantise(seconds: f64, rate: FrameRate) -> Rational {
 /// keeps the raw local placement; video retains its original global grid.
 pub(crate) fn quantise_at(seconds: f64, rate: FrameRate, origin: f64) -> Rational {
     quantise(seconds + origin, rate) - quantise(origin, rate)
+}
+
+#[cfg(test)]
+mod motion_tests {
+    use concat_core::motion::{Entrance, Repeat};
+    use concat_project::model::{ClipMotion, MotionPick};
+
+    use super::motion_of;
+
+    fn pick(preset: &str, duration: f64) -> Option<MotionPick> {
+        Some(MotionPick {
+            preset: preset.to_owned(),
+            duration,
+        })
+    }
+
+    /// Seconds become shares of the clip; an entrance and an exit longer
+    /// than the clip together are shortened to meet; an unknown name is
+    /// no pick at all.
+    #[test]
+    fn picks_become_shares_of_the_clip() {
+        let motion = motion_of(
+            &ClipMotion {
+                intro: pick("drop", 0.5),
+                outro: pick("fly-left", 1.0),
+                repeat: pick("heartbeat", 0.8),
+            },
+            4.0,
+        );
+        let intro = motion.intro.expect("an entrance");
+        assert_eq!(intro.preset, Entrance::Drop);
+        assert!((intro.span - 0.125).abs() < 1e-12);
+        assert!((motion.outro.expect("an exit").span - 0.25).abs() < 1e-12);
+        let repeat = motion.repeat.expect("a loop");
+        assert_eq!(repeat.preset, Repeat::Heartbeat);
+        assert!((repeat.span - 0.2).abs() < 1e-12);
+
+        let squeezed = motion_of(
+            &ClipMotion {
+                intro: pick("fade", 1.5),
+                outro: pick("fade", 0.5),
+                repeat: pick("somersault", 1.0),
+            },
+            1.0,
+        );
+        assert!((squeezed.intro.expect("in").span - 0.75).abs() < 1e-12);
+        assert!((squeezed.outro.expect("out").span - 0.25).abs() < 1e-12);
+        assert!(squeezed.repeat.is_none());
+    }
 }

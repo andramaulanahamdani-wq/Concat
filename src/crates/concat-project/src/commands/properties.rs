@@ -87,6 +87,9 @@ pub(super) fn apply(
             if let Some(background) = patch.background {
                 applied |= assign(&mut clip.background, background.map(Background::tidy));
             }
+            if let Some(motion) = patch.motion {
+                applied |= assign(&mut clip.motion, motion.and_then(ClipMotion::tidy));
+            }
             Ok(Outcome {
                 created_id: None,
                 applied,

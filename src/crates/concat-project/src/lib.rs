@@ -534,6 +534,56 @@ mod tests {
     /// background: its own over the timeline's, black meaning black. A
     /// title, a picture on a lane above, and a lane of music underneath
     /// change nothing.
+    /// Picked presets travel in a document under "in", "out" and "loop",
+    /// their durations held into range on the way in; a clip with none
+    /// writes nothing, and null takes them all off.
+    #[test]
+    fn motion_presets_round_trip_and_are_held_to_range() {
+        use crate::model::{ClipMotion, MotionPick};
+        let (mut editor, _, clip_id) = fixture();
+        let document = editor.to_document(&settings());
+        assert!(document["timelines"][0]["clips"][0].get("motion").is_none());
+        let pick = |preset: &str, duration: f64| {
+            Some(MotionPick {
+                preset: preset.to_owned(),
+                duration,
+            })
+        };
+        editor
+            .apply(Command::UpdateClip {
+                clip_id: clip_id.clone(),
+                patch: ClipPatch {
+                    motion: Some(Some(ClipMotion {
+                        intro: pick("pop", 0.4),
+                        outro: pick("fade", 60.0),
+                        repeat: pick("", 1.0),
+                    })),
+                    ..ClipPatch::default()
+                },
+            })
+            .expect("sets");
+        let document = editor.to_document(&settings());
+        assert_eq!(
+            document["timelines"][0]["clips"][0]["motion"],
+            json!({
+                "in": { "preset": "pop", "duration": 0.4 },
+                "out": { "preset": "fade", "duration": ClipMotion::MAX_DURATION },
+            }),
+            "held to range, and a pick with no name dropped"
+        );
+        let loaded = Editor::from_document(&document).expect("loads");
+        assert_eq!(loaded.project(), editor.project());
+
+        let off: Command = serde_json::from_value(json!({
+            "op": "updateClip",
+            "clipId": clip_id,
+            "patch": { "motion": null }
+        }))
+        .expect("parses");
+        assert!(editor.apply(off).expect("applies").applied);
+        assert_eq!(editor.project().active().clips[0].motion, None);
+    }
+
     #[test]
     fn the_background_belongs_to_the_lowest_picture_lane() {
         use crate::model::Background;
