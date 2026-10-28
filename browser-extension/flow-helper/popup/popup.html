@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <title>Flow Helper</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="../icons/icon48.png" alt="" />
+      <div>
+        <div class="title">Flow Helper</div>
+        <div class="muted small" id="where">Memeriksa tab…</div>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div><b id="s-today-dl">0</b><span>diunduh hari ini</span></div>
+      <div><b id="s-today-pr">0</b><span>prompt hari ini</span></div>
+      <div><b id="s-total-dl">0</b><span>total diunduh</span></div>
+    </div>
+
+    <div id="on-flow" hidden>
+      <div class="status" id="tab-status"></div>
+      <button class="btn primary" id="b-panel">Buka panel</button>
+      <div class="pair">
+        <button class="btn" id="b-dl">Unduh semua</button>
+        <button class="btn" id="b-zip">Unduh ZIP</button>
+      </div>
+    </div>
+    <div id="off-flow" hidden>
+      <p class="muted small">Tab ini bukan Google Flow.</p>
+      <button class="btn primary" id="b-open">Buka Google Flow</button>
+    </div>
+
+    <label class="switch"><input type="checkbox" id="t-auto" /><span class="track"></span>Auto-unduh hasil baru</label>
+    <label class="switch"><input type="checkbox" id="t-tiles" /><span class="track"></span>Tombol di atas gambar</label>
+
+    <div class="spark" id="spark" title="Unduhan 14 hari terakhir"></div>
+
+    <footer>
+      <button class="link" id="b-options">Pengaturan</button>
+      <button class="link" id="b-keys">Pintasan keyboard</button>
+    </footer>
+    <script src="../lib/common.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pengaturan Flow Helper</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../icons/icon48.png" alt="" />
+        <div>
+          <h1>Flow Helper</h1>
+          <div class="muted">Pengaturan tersimpan otomatis.</div>
+        </div>
+        <span id="saved" class="saved" hidden>Tersimpan ✓</span>
+      </header>
+
+      <div class="card" id="settings"></div>
+
+      <div class="card">
+        <h3 class="group-title">Preset gaya untuk antrean</h3>
+        <p class="hint">Teks preset ditambahkan di akhir setiap prompt saat chip-nya aktif di tab Antrean.</p>
+        <div id="presets"></div>
+        <button class="btn" id="add-preset">+ Tambah preset</button>
+      </div>
+
+      <div class="card">
+        <h3 class="group-title">Contoh nama file</h3>
+        <p class="hint">Dengan pola sekarang, gambar pertama dari prompt "seekor kucing oranye di atap rumah saat senja" akan bernama:</p>
+        <code id="name-preview"></code>
+      </div>
+
+      <div class="card">
+        <h3 class="group-title">Data</h3>
+        <div class="row">
+          <button class="btn" id="export">Cadangkan semua (JSON)</button>
+          <button class="btn" id="import">Pulihkan dari cadangan</button>
+          <input type="file" id="import-file" accept=".json" hidden />
+        </div>
+        <div class="row">
+          <button class="btn danger" id="reset-marks">Hapus tanda "sudah diunduh"</button>
+          <button class="btn danger" id="clear-history">Hapus riwayat prompt</button>
+          <button class="btn danger" id="reset-settings">Kembalikan pengaturan awal</button>
+        </div>
+        <p class="hint" id="data-info"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="group-title">Pintasan keyboard</h3>
+        <ul class="keys">
+          <li><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> tampilkan / sembunyikan panel</li>
+          <li><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> unduh yang dipilih (atau semua)</li>
+          <li><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> unduh yang dipilih sebagai ZIP</li>
+        </ul>
+        <button class="btn" id="shortcuts">Ubah pintasan</button>
+      </div>
+    </main>
+    <script src="../lib/common.js"></script>
+    <script src="../lib/settings-form.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
