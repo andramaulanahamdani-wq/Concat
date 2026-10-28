@@ -3,8 +3,8 @@
 importScripts('lib/common.js');
 
 const OFFSCREEN_URL = 'offscreen/offscreen.html';
-const FLOW_URL = 'https://labs.google/fx/tools/flow';
-const FLOW_PATTERNS = ['https://labs.google/fx/*'];
+const FLOW_URL = 'https://flow.google.com/';
+const FLOW_PATTERNS = ['https://flow.google.com/*', 'https://labs.google/fx/*'];
 
 // ---------- offscreen worker ----------
 
@@ -233,6 +233,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
   tab = tab || (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
-  if (!tab || !/^https:\/\/labs\.google\/fx\//.test(tab.url || '')) return;
+  if (!tab || !/^https:\/\/(flow\.google\.com\/|labs\.google\/fx\/)/.test(tab.url || '')) return;
   chrome.tabs.sendMessage(tab.id, { type: command }).catch(() => {});
 });

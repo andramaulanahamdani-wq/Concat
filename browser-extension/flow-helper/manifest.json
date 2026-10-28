@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Flow Helper - Unduh Massal & Antrean Prompt",
   "short_name": "Flow Helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pembantu tidak resmi untuk Google Flow: unduh banyak gambar sekaligus (file/ZIP), auto-unduh, antrean prompt, pustaka prompt, dan lembar kontak.",
   "minimum_chrome_version": "116",
   "icons": {
@@ -31,13 +31,16 @@
     "notifications"
   ],
   "host_permissions": [
+    "https://flow.google.com/*",
     "https://labs.google/*",
     "https://*.googleusercontent.com/*",
-    "https://*.googleapis.com/*"
+    "https://*.googleapis.com/*",
+    "https://*.ggpht.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
+        "https://flow.google.com/*",
         "https://labs.google/fx/*"
       ],
       "js": [
@@ -59,6 +62,7 @@
         "icons/icon48.png"
       ],
       "matches": [
+        "https://flow.google.com/*",
         "https://labs.google/*"
       ]
     }

@@ -1,7 +1,7 @@
 # Flow Helper
 
 Ekstensi Chrome / Brave (Manifest V3) untuk mempercepat kerja di
-[Google Flow](https://labs.google/fx/tools/flow): unduh banyak gambar
+[Google Flow](https://flow.google.com) (juga alamat lama labs.google/fx): unduh banyak gambar
 sekaligus, auto-unduh hasil baru, antrean prompt, pustaka prompt, dan
 lembar kontak.
 

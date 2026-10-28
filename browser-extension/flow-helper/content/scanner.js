@@ -32,7 +32,7 @@
         return scanner.upgradeUrl(absolute(u.searchParams.get('url')));
       }
       // googleusercontent sizing suffix: ...=w400-h300-c -> ...=s0 (original)
-      if (/googleusercontent\.com$/.test(u.hostname) && /=[swh]\d+[^/]*$/.test(u.pathname + u.search)) {
+      if (/(googleusercontent|ggpht)\.com$/.test(u.hostname) && /=[swh]\d+[^/]*$/.test(u.pathname + u.search)) {
         return u.href.replace(/=[swh]\d+[^/?#]*$/, '=s0');
       }
       return u.href;

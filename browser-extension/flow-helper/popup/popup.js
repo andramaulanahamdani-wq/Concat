@@ -4,7 +4,7 @@
   const $ = (id) => document.getElementById(id);
 
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const onFlow = tab && /^https:\/\/labs\.google\/fx\//.test(tab.url || '');
+  const onFlow = tab && /^https:\/\/(flow\.google\.com\/|labs\.google\/fx\/)/.test(tab.url || '');
   const toTab = (msg) => chrome.tabs.sendMessage(tab.id, msg);
 
   $('on-flow').hidden = !onFlow;
